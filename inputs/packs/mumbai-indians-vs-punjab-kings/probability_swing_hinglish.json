@@ -1,0 +1,32 @@
+{
+  "template": "probability_swing",
+  "language": "hinglish",
+  "title": "Probability swing",
+  "match": "Mumbai Indians vs Punjab Kings",
+  "venue": "Himachal Pradesh Cricket Association Stadium, Dharamsala",
+  "public_team": "Punjab Kings",
+  "model_pick": "Mumbai Indians",
+  "probability": 52,
+  "hook_variants": [
+    "Ek over ne match badal diya.",
+    "Probability 64% se 47% par aa gayi.",
+    "Aise swing normal score apps miss kar dete hain."
+  ],
+  "cta_mode": "join_telegram",
+  "cta_text": "Full match reads ke liye toss se pehle Telegram join karo.",
+  "voiceover": "One over swing. Set batter gone. Dot-ball cluster. Required rate spike. One over can change the match before the crowd updates its belief. Full match reads ke liye toss se pehle Telegram join karo.",
+  "caption": "Mumbai Indians vs Punjab Kings probability swing.\nOne over swing.\nProbability: 64% -> 47%.\n-> Set batter gone\n-> Dot-ball cluster\n-> Required rate spike\n\nLesson: One over can change the match before the crowd updates its belief.\n\nFull match reads ke liye toss se pehle Telegram join karo.",
+  "generated_at": "2026-05-18T14:16:45+00:00",
+  "snapshot": {
+    "snapshot_label": "One over swing",
+    "score": "118/2 after 13.4 overs",
+    "probability_before": 64,
+    "probability_after": 47,
+    "signals": [
+      "Set batter gone",
+      "Dot-ball cluster",
+      "Required rate spike"
+    ],
+    "lesson": "One over can change the match before the crowd updates its belief."
+  }
+}

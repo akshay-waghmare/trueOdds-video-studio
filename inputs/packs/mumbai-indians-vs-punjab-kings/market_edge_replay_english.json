@@ -1,0 +1,30 @@
+{
+  "template": "market_edge_replay",
+  "language": "english",
+  "title": "Market edge replay",
+  "match": "Mumbai Indians vs Punjab Kings",
+  "venue": "Himachal Pradesh Cricket Association Stadium, Dharamsala",
+  "public_team": "Punjab Kings",
+  "model_pick": "Mumbai Indians",
+  "probability": 52,
+  "hook_variants": [
+    "The edge opened before the crowd saw it.",
+    "Probability and public reaction were not saying the same thing.",
+    "This is an educational replay, not a guaranteed return story."
+  ],
+  "cta_mode": "join_telegram",
+  "cta_text": "Join Telegram before toss for full match reads.",
+  "voiceover": "Mid-chase divergence. Model probability moved from 62 to 48. Public pricing moved from 71 to 56. Public confidence stayed too high for too long while pressure signals were already visible. Educational replay only. This is about probability reading, not guaranteed returns.",
+  "caption": "Mumbai Indians vs Punjab Kings educational replay.\nModel: 62% -> 48%.\nPublic or price view: 71% -> 56%.\nPublic confidence stayed too high for too long while pressure signals were already visible.\n\nEducational replay only. This is about probability reading, not guaranteed returns.",
+  "generated_at": "2026-05-18T14:16:45+00:00",
+  "replay": {
+    "snapshot_label": "Mid-chase divergence",
+    "model_probability_before": 62,
+    "model_probability_after": 48,
+    "public_probability_before": 71,
+    "public_probability_after": 56,
+    "edge_reason": "Public confidence stayed too high for too long while pressure signals were already visible.",
+    "risk_note": "Educational replay only. This is about probability reading, not guaranteed returns.",
+    "safe_framing": "Educational replay only. No guaranteed return claims."
+  }
+}

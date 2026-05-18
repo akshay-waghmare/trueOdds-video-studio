@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "updated_at": "2026-05-14T12:22:12+00:00",
+  "predictions": [
+    {
+      "match_id": "gt-vs-srh-narendra-modi-stadium",
+      "match": "GT vs SRH",
+      "venue": "Narendra Modi Stadium",
+      "recorded_at": "2026-05-14T12:17:26+00:00",
+      "prediction": {
+        "model_pick": "GT",
+        "probability": 71,
+        "source": "historical_blend_v1",
+        "method": "35% overall + 35% H2H + 30% venue"
+      },
+      "result": {
+        "status": "pending",
+        "winner": null,
+        "hit": null,
+        "brier_score": null,
+        "notes": null
+      }
+    },
+    {
+      "match_id": "mi-vs-pbks-himachal-pradesh-cricket-association-stadium-dharamsala",
+      "match": "MI vs PBKS",
+      "venue": "Himachal Pradesh Cricket Association Stadium, Dharamsala",
+      "recorded_at": "2026-05-14T12:22:12+00:00",
+      "prediction": {
+        "model_pick": "MI",
+        "probability": 52,
+        "source": "historical_blend_v1",
+        "method": "50% overall + 50% H2H"
+      },
+      "result": {
+        "status": "pending",
+        "winner": null,
+        "hit": null,
+        "brier_score": null,
+        "notes": null
+      }
+    }
+  ]
+}

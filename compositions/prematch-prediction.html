@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1080, height=1920, initial-scale=1">
+  <title>TrueOddsML - Pre-Match Prediction</title>
+  <style>
+    @property --meter-deg {
+      syntax: "<angle>";
+      inherits: true;
+      initial-value: 0deg;
+    }
+
+    :root {
+      --bg: #0a0a0f;
+      --border: #1e2235;
+      --yellow: #f5c518;
+      --teal: #00c9a7;
+      --red: #ff4c4c;
+      --text: #ffffff;
+      --muted: #a0a8b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, Poppins, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    /* — Flash overlay — bursts at t=0 */
+    #flash-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(245, 197, 24, 0.88);
+      pointer-events: none;
+    }
+
+    /* — Stage — */
+    .stage {
+      position: relative;
+      width: 1080px;
+      height: 1920px;
+      padding: 72px 74px 76px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 72% 18%, rgba(245, 197, 24, 0.18), transparent 28%),
+        radial-gradient(circle at 12% 78%, rgba(0, 201, 167, 0.14), transparent 30%),
+        linear-gradient(160deg, #08080d 0%, #0d1020 55%, #09090f 100%);
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.14;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 72px 72px;
+      transform: rotate(-8deg) scale(1.15);
+    }
+
+    .stage::after {
+      content: "";
+      position: absolute;
+      inset: 34px;
+      border: 1px solid rgba(245, 197, 24, 0.18);
+      border-radius: 44px;
+      pointer-events: none;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* — Eyebrow — */
+    .eyebrow {
+      display: inline-flex;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 22px;
+      border: 1px solid rgba(245, 197, 24, 0.28);
+      border-radius: 999px;
+      color: var(--yellow);
+      background: rgba(245, 197, 24, 0.08);
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow-dot {
+      width: 9px;
+      height: 9px;
+      background: var(--yellow);
+      border-radius: 50%;
+      animation: blink 1.4s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.15; }
+    }
+
+    .match-label {
+      display: block;
+      margin-top: 14px;
+      color: rgba(255,255,255,0.5);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* — Split card (shown FIRST) — */
+    .split-card {
+      display: grid;
+      grid-template-columns: 1fr 58px 1fr;
+      gap: 16px;
+      margin-top: 24px;
+      align-items: center;
+    }
+
+    .pick-box {
+      position: relative;
+      padding: 28px 22px 30px;
+      border-radius: 30px;
+      border: 1px solid var(--border);
+      background: linear-gradient(145deg, rgba(18,18,30,0.96), rgba(23,24,42,0.92));
+      box-shadow: 0 30px 90px rgba(0,0,0,0.38);
+      overflow: hidden;
+    }
+
+    .pick-box::after {
+      content: "";
+      position: absolute;
+      inset: auto -20% -40% -20%;
+      height: 110px;
+      background: radial-gradient(circle, rgba(255,255,255,0.1), transparent 64%);
+    }
+
+    .pick-label {
+      color: var(--muted);
+      font-size: 21px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .team-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 106px;
+      margin-top: 16px;
+      border-radius: 22px;
+      font-size: 56px;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+      color: var(--text);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .team-badge img {
+      width: 84px;
+      height: 84px;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 2px 12px rgba(0,0,0,0.6));
+    }
+
+    .pick-accent {
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .public { border-color: rgba(255,76,76,0.28); }
+    .public .team-badge { box-shadow: inset 0 -10px 50px rgba(255,76,76,0.2); }
+    .public .pick-accent { color: var(--red); }
+
+    .model { border-color: rgba(245,197,24,0.32); box-shadow: 0 0 44px rgba(245,197,24,0.1); }
+    .model .team-badge {
+      color: #111112;
+      background: linear-gradient(135deg, #ffe278, var(--yellow));
+      box-shadow: 0 0 60px rgba(245,197,24,0.38);
+    }
+    .model .pick-accent { color: var(--yellow); }
+
+    .vs-badge {
+      display: grid;
+      place-items: center;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      font-size: 20px;
+      font-weight: 950;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* — Hook — */
+    .hook { margin-top: 30px; }
+
+    .hook-line-1 {
+      display: block;
+      font-size: 60px;
+      line-height: 1.0;
+      font-weight: 950;
+      letter-spacing: -0.035em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .hook-line-2 {
+      display: block;
+      margin-top: 8px;
+      font-size: 76px;
+      line-height: 0.94;
+      font-weight: 950;
+      letter-spacing: -0.048em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      text-shadow: 0 0 44px rgba(245,197,24,0.3);
+    }
+
+    /* — Disagreement banner — */
+    .disagreement {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 24px;
+      padding: 16px 24px;
+      border-left: 7px solid var(--yellow);
+      border-radius: 0 14px 14px 0;
+      color: var(--text);
+      background: rgba(245,197,24,0.08);
+      font-size: 27px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* — Subhook — */
+    .subhook {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 27px;
+      font-weight: 700;
+      line-height: 1.24;
+    }
+    .subhook strong { color: #fff; font-weight: 900; }
+
+    /* — Separator — */
+    .separator {
+      height: 2px;
+      margin-top: 26px;
+      background: linear-gradient(90deg, var(--yellow) 0%, rgba(245,197,24,0) 100%);
+      transform-origin: left center;
+    }
+
+    /* — Probability panel — */
+    .probability-panel {
+      display: grid;
+      grid-template-columns: 270px 1fr;
+      gap: 32px;
+      margin-top: 26px;
+      align-items: center;
+    }
+
+    .meter {
+      position: relative;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: conic-gradient(var(--yellow) var(--meter-deg), rgba(255,255,255,0.1) 0deg);
+      animation: meterGlow 2.2s ease-in-out infinite alternate;
+    }
+
+    .meter::before {
+      content: "";
+      position: absolute;
+      width: 194px;
+      height: 194px;
+      border-radius: 50%;
+      background: #0d0e18;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .prob-value {
+      position: relative;
+      z-index: 1;
+      font-size: 70px;
+      font-weight: 950;
+      letter-spacing: -0.06em;
+      color: var(--text);
+    }
+
+    @keyframes meterGlow {
+      from { filter: drop-shadow(0 0 18px rgba(245,197,24,0.18)); }
+      to   { filter: drop-shadow(0 0 48px rgba(245,197,24,0.42)); }
+    }
+
+    .prob-label {
+      margin-bottom: 10px;
+      color: var(--yellow);
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .prob-copy {
+      font-size: 40px;
+      line-height: 1.1;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+    }
+
+    .prob-copy em { color: var(--yellow); font-style: normal; }
+
+    /* — Reasons — */
+    .reasons { display: grid; gap: 18px; margin-top: 24px; }
+
+    .reason-card {
+      min-height: 104px;
+      display: grid;
+      grid-template-columns: 62px 1fr;
+      gap: 18px;
+      align-items: center;
+      padding: 20px 24px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: rgba(18,18,30,0.9);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.28);
+      font-size: 27px;
+      line-height: 1.18;
+      font-weight: 800;
+    }
+
+    .reason-index {
+      width: 62px;
+      height: 62px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      color: #101014;
+      background: var(--yellow);
+      font-size: 26px;
+      font-weight: 950;
+      flex-shrink: 0;
+    }
+
+    /* — Watermark — */
+    .watermark {
+      margin-top: 20px;
+      color: rgba(255,255,255,0.42);
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    /* — CTA — */
+    .cta {
+      margin-top: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 26px 32px;
+      border-radius: 30px;
+      color: #0c0c10;
+      background: linear-gradient(135deg, #ffe676, var(--yellow));
+      text-align: center;
+      text-transform: uppercase;
+      box-shadow: 0 0 90px rgba(245,197,24,0.38);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+      transform: translateX(-130%);
+      animation: shimmer 3s 16.2s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0%   { transform: translateX(-130%); }
+      100% { transform: translateX(230%); }
+    }
+
+    .cta-main {
+      display: block;
+      font-size: 34px;
+      font-weight: 950;
+      letter-spacing: -0.02em;
+    }
+
+    .cta-sub {
+      display: block;
+      margin-top: 7px;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: rgba(0,0,0,0.62);
+    }
+
+    .safe-note {
+      margin-top: 10px;
+      text-align: right;
+      color: rgba(160,168,184,0.52);
+      font-size: 17px;
+      line-height: 1.3;
+    }
+
+    /* All animated elements start hidden — GSAP takes over */
+    .eyebrow, .match-label, #box-public, .vs-badge, #box-model,
+    .hook-line-1, .hook-line-2, .disagreement, .subhook, .separator,
+    .probability-panel, #reason-card-1, #reason-card-2, #reason-card-3,
+    .watermark, .cta, .safe-note {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    /* — Caption layer — */
+    #caption-layer {
+      position: absolute;
+      bottom: 280px;
+      left: 0;
+      width: 1080px;
+      z-index: 50;
+      pointer-events: none;
+    }
+
+    .caption-group {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 1080px;
+      text-align: center;
+      padding: 0 80px;
+      box-sizing: border-box;
+      overflow: visible;
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .caption-word {
+      display: inline;
+      font-size: 50px;
+      font-weight: 700;
+      font-family: Inter, Poppins, system-ui, -apple-system, sans-serif;
+      color: rgba(255, 255, 255, 0.82);
+      text-shadow: 0 2px 12px rgba(0,0,0,0.95), 0 0 28px rgba(0,0,0,0.8);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Yellow flash burst fades at t=0 -->
+  <div id="flash-overlay"></div>
+
+  <main
+    id="comp-1"
+    class="stage"
+    data-composition-id="prematch-prediction"
+    data-start="0"
+    data-duration="20"
+    data-width="1080"
+    data-height="1920"
+    aria-label="TrueOddsML pre-match prediction reel"
+  >
+    <section class="content">
+
+      <div class="eyebrow">
+        <span class="eyebrow-dot"></span>
+        TrueOddsML &middot; PRE-MATCH
+      </div>
+      <span class="match-label" id="match-label">MI vs KKR</span>
+
+      <!-- Split card — first thing you see -->
+      <section class="split-card" aria-label="Public pick vs model pick">
+        <article class="pick-box public" id="box-public">
+          <div class="pick-label" id="public-label">Crowd Pick</div>
+          <div id="public-team" class="team-badge">MI</div>
+          <div class="pick-accent" id="public-accent">Public Favourite</div>
+        </article>
+
+        <div class="vs-badge" id="vs-badge">VS</div>
+
+        <article class="pick-box model" id="box-model">
+          <div class="pick-label" id="model-label">TrueOdds Pick</div>
+          <div id="model-pick" class="team-badge">KKR</div>
+          <div class="pick-accent" id="model-accent">Model Pick &#9889;</div>
+        </article>
+      </section>
+
+      <!-- Hook — verbal punch after the visual -->
+      <h1 class="hook" aria-label="Public is backing MI. Model says KKR.">
+        <span class="hook-line-1" id="hook-line-1">PUBLIC IS BACKING <span id="public-team-hook">MI</span>.</span>
+        <span class="hook-line-2" id="hook-line-2">MODEL SAYS <span id="model-pick-hook">KKR</span>.</span>
+      </h1>
+
+      <div class="disagreement" id="status-banner">&#9889; Model disagrees with the crowd</div>
+
+      <p class="subhook" id="subhook">
+        <strong>NOT BABA PREDICTION.</strong> Model probability before the match starts.
+      </p>
+
+      <div class="separator" id="separator"></div>
+
+      <!-- Probability panel -->
+      <section class="probability-panel" aria-label="Model probability">
+        <div class="meter">
+          <div id="probability" class="prob-value">0%</div>
+        </div>
+        <div>
+          <div class="prob-label" id="prob-label">Win Probability</div>
+          <div class="prob-copy">
+            <em id="model-pick-copy">KKR</em> <span id="prob-copy-rest">has the better price than public hype.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Reasons -->
+      <section class="reasons" aria-label="Prediction reasons">
+        <article class="reason-card" id="reason-card-1">
+          <div class="reason-index">1</div>
+          <div id="reason-1">Better death bowling</div>
+        </article>
+        <article class="reason-card" id="reason-card-2">
+          <div class="reason-index">2</div>
+          <div id="reason-2">Venue supports their batting style</div>
+        </article>
+        <article class="reason-card" id="reason-card-3">
+          <div class="reason-index">3</div>
+          <div id="reason-3">Market hype is too high on MI</div>
+        </article>
+      </section>
+
+      <div class="watermark">TrueOddsML &middot; Probability First</div>
+
+      <!-- CTA at 15s -->
+      <div class="cta" role="banner">
+        <span class="cta-main" id="cta-main">NOT PREDICTION. PROBABILITY.</span>
+        <span class="cta-sub" id="cta-sub">Follow TrueOddsML before the toss.</span>
+      </div>
+
+      <p class="safe-note" id="safe-note">TrueOddsML &middot; Probability-first cricket analysis.</p>
+
+    </section>
+
+    <!-- Voiceover audio — muted video is not used; audio is always a separate element -->
+    <audio
+      id="voiceover"
+      data-start="0"
+      data-track-index="3"
+      src="assets/voiceover.wav"
+      data-volume="1"
+    ></audio>
+
+    <!-- Caption overlay — populated by buildCaptionLayer() -->
+    <div id="caption-layer" aria-hidden="true"></div>
+
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    const fallbackPrediction = {
+      template: "prematch_prediction",
+      match: "MI vs KKR",
+      public_team: "MI",
+      model_pick: "KKR",
+      probability: 62,
+      reasons: [
+        "Better death bowling",
+        "Venue supports their batting style",
+        "Market hype is too high on MI"
+      ],
+      cta: "Not prediction. Probability. Follow TrueOddsML."
+    };
+
+    const LOGO_MAP = {
+      GT:   "assets/logo/gujarat_titan.png",
+      SRH:  "assets/logo/sunrisers_hyderabad.png",
+    };
+
+    const clamp = (v, a, b) => Math.min(Math.max(Number(v) || 0, a), b);
+
+    function setText(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    }
+
+    function normalizeTeam(value) {
+      return String(value || "").trim().toLowerCase().replace(/[^a-z0-9]+/g, "");
+    }
+
+    function setTeamBadge(id, abbr) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const src = LOGO_MAP[abbr];
+      if (src) {
+        el.innerHTML = `<img src="${src}" alt="${abbr}">`;
+      } else {
+        el.textContent = abbr;
+      }
+    }
+
+    function applyPrediction(data) {
+      const p = { ...fallbackPrediction, ...data };
+      const prob = clamp(p.probability, 0, 100);
+      const reasons = Array.isArray(p.reasons) ? p.reasons : fallbackPrediction.reasons;
+      const publicTeam = p.public_team || "PUBLIC";
+      const modelPick = p.model_pick || "MODEL";
+      const sameFavorite = normalizeTeam(publicTeam) === normalizeTeam(modelPick);
+
+      setText("match-label", p.match || fallbackPrediction.match);
+      setTeamBadge("public-team", publicTeam);
+      setTeamBadge("model-pick", modelPick);
+      setText("model-pick-copy", modelPick);
+
+      if (sameFavorite) {
+        setText("public-label", "Pre-Toss Fav");
+        setText("public-accent", "Before Toss");
+        setText("model-label", "Live Fav");
+        setText("model-accent", `Current ${prob}%`);
+        setText("hook-line-1", "TOSS IS IN.");
+        setText("hook-line-2", `${modelPick} STILL ${prob}%.`);
+        setText("status-banner", `\u26a1 Toss context added. Edge stays with ${modelPick}`);
+        document.getElementById("subhook").innerHTML = "<strong>LIVE MODEL STATE.</strong> Toss context is now priced in.";
+        setText("prob-label", "Current Win Probability");
+        setText("prob-copy-rest", "remains favourite after the toss update.");
+        setText("cta-main", "JOIN TELEGRAM");
+        setText("cta-sub", "Full picks before toss");
+        setText("safe-note", "TrueOddsML \u00b7 Toss update incorporated into live model state.");
+        document.getElementById("hook-line-2").style.fontSize = "68px";
+      } else {
+        setText("public-team-hook", publicTeam);
+        setText("model-pick-hook", modelPick);
+      }
+
+      window.__targetProb = prob;
+      window.__targetMeterDeg = prob * 3.6;
+
+      const cards = document.querySelectorAll(".reason-card");
+      for (let i = 0; i < cards.length; i++) {
+        const text = document.getElementById(`reason-${i + 1}`);
+        if (reasons[i]) {
+          cards[i].style.display = "grid";
+          if (text) text.textContent = reasons[i];
+        } else {
+          cards[i].style.display = "none";
+        }
+      }
+    }
+
+    async function loadPrediction() {
+      if (window.__MATCH_PREDICTION__) {
+        applyPrediction(window.__MATCH_PREDICTION__);
+        return;
+      }
+      try {
+        const res = await fetch("../inputs/match_prediction.json", { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        applyPrediction(await res.json());
+      } catch (err) {
+        console.warn("Using fallback prediction data:", err.message);
+        applyPrediction(fallbackPrediction);
+      }
+    }
+
+    loadPrediction();
+
+    // ─── GSAP seek-driven timeline ─────────────────────────────────────────────
+    function buildTimeline() {
+      if (!window.gsap) {
+        return { pause() { return this; }, seek() { return this; }, time() { return this; }, duration() { return 20; } };
+      }
+
+      const prob     = window.__targetProb     ?? 62;
+      const meterDeg = window.__targetMeterDeg ?? (prob * 3.6);
+
+      const tl = gsap.timeline({ paused: true });
+
+      // — Initial states (explicit fromTo keeps seeking deterministic) —
+      gsap.set(".eyebrow",         { autoAlpha: 0, y: -22, scale: 0.88 });
+      gsap.set(".match-label",     { autoAlpha: 0, y: -12 });
+      gsap.set("#box-public",      { autoAlpha: 0, x: -90, scale: 0.9 });
+      gsap.set("#box-model",       { autoAlpha: 0, x:  90, scale: 0.9 });
+      gsap.set("#vs-badge",        { autoAlpha: 0, scale: 0.35, rotation: 45 });
+      gsap.set(".hook-line-1",     { autoAlpha: 0, y: 36 });
+      gsap.set(".hook-line-2",     { autoAlpha: 0, y: 36 });
+      gsap.set(".disagreement",    { autoAlpha: 0, x: -64 });
+      gsap.set(".subhook",         { autoAlpha: 0, y: 20 });
+      gsap.set("#separator",       { autoAlpha: 0, scaleX: 0, transformOrigin: "left center" });
+      gsap.set(".probability-panel", { autoAlpha: 0, y: 46, scale: 0.94 });
+      gsap.set("#reason-card-1",   { autoAlpha: 0, x: -72 });
+      gsap.set("#reason-card-2",   { autoAlpha: 0, x: -72 });
+      gsap.set("#reason-card-3",   { autoAlpha: 0, x: -72 });
+      gsap.set(".watermark",       { autoAlpha: 0 });
+      gsap.set(".cta",             { autoAlpha: 0, y: 46, scale: 0.93 });
+      gsap.set(".safe-note",       { autoAlpha: 0 });
+      // Keep flash hidden at frame 0 so Instagram cover / first-frame is not pure yellow
+      gsap.set("#flash-overlay",   { opacity: 0 });
+
+      // t=0.05 — Yellow flash bursts in then fades (starts after frame 0)
+      tl.to("#flash-overlay", { opacity: 1, duration: 0.04, ease: "none" }, 0.05);
+      tl.to("#flash-overlay", { opacity: 0, duration: 0.26, ease: "power2.out" }, 0.09);
+
+      // t=0.10 — Eyebrow pops in with spring
+      tl.to(".eyebrow",     { autoAlpha: 1, y: 0, scale: 1, duration: 0.32, ease: "back.out(2.2)" }, 0.10);
+      tl.to(".match-label", { autoAlpha: 1, y: 0, duration: 0.28, ease: "power2.out" },              0.24);
+
+      // t=0.20 — PUBLIC box slams in from the left
+      tl.to("#box-public", { autoAlpha: 1, x: 0, scale: 1, duration: 0.48, ease: "back.out(1.8)" }, 0.20);
+
+      // t=0.50 — VS badge spins in
+      tl.to("#vs-badge",   { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.30, ease: "back.out(2.6)" }, 0.50);
+
+      // t=0.55 — MODEL box slams in from the right
+      tl.to("#box-model",  { autoAlpha: 1, x: 0, scale: 1, duration: 0.52, ease: "back.out(1.8)" }, 0.55);
+
+      // t=1.00 — Hook line 1: "PUBLIC IS BACKING MI."
+      tl.to(".hook-line-1", { autoAlpha: 1, y: 0, duration: 0.36, ease: "power3.out" }, 1.00);
+
+      // t=1.42 — Hook line 2: "MODEL SAYS KKR." punches in bigger
+      tl.to(".hook-line-2", { autoAlpha: 1, y: 0, duration: 0.38, ease: "back.out(1.6)" }, 1.42);
+
+      // t=2.00 — Disagreement banner slides from left
+      tl.to(".disagreement", { autoAlpha: 1, x: 0, duration: 0.46, ease: "power3.out" }, 2.00);
+
+      // t=2.70 — Both team badges pop for emphasis
+      tl.to([".pick-box.public .team-badge", ".pick-box.model .team-badge"], {
+        scale: 1.09, duration: 0.18, ease: "power2.out", yoyo: true, repeat: 1
+      }, 2.70);
+
+      // t=3.00 — Brand statement fades up
+      tl.to(".subhook",    { autoAlpha: 1, y: 0, duration: 0.42, ease: "power2.out" }, 3.00);
+
+      // t=3.70 — Separator extends left → right
+      tl.to("#separator",  { autoAlpha: 1, scaleX: 1, duration: 0.54, ease: "power3.out" }, 3.70);
+
+      // t=5.00 — Probability panel slides up
+      tl.to(".probability-panel", { autoAlpha: 1, y: 0, scale: 1, duration: 0.58, ease: "back.out(1.5)" }, 5.00);
+
+      // t=5.50 — Probability counter 0 → target value
+      const probProxy = { val: 0 };
+      tl.fromTo(probProxy,
+        { val: 0 },
+        {
+          val: prob,
+          duration: 2.2,
+          ease: "power2.inOut",
+          onUpdate() {
+            const el = document.getElementById("probability");
+            if (el) el.textContent = `${Math.round(probProxy.val)}%`;
+          }
+        },
+        5.50
+      );
+
+      // t=5.50 — Conic meter draws simultaneously
+      const meterProxy = { deg: 0 };
+      tl.fromTo(meterProxy,
+        { deg: 0 },
+        {
+          deg: meterDeg,
+          duration: 2.2,
+          ease: "power2.inOut",
+          onUpdate() {
+            document.documentElement.style.setProperty("--meter-deg", `${meterProxy.deg}deg`);
+          }
+        },
+        5.50
+      );
+
+      // t=9.00 — Reason 1 slams from left
+      tl.to("#reason-card-1", { autoAlpha: 1, x: 0, duration: 0.44, ease: "back.out(1.8)" }, 9.00);
+
+      // t=10.50 — Reason 2
+      tl.to("#reason-card-2", { autoAlpha: 1, x: 0, duration: 0.44, ease: "back.out(1.8)" }, 10.50);
+
+      // t=12.00 — Reason 3
+      tl.to("#reason-card-3", { autoAlpha: 1, x: 0, duration: 0.44, ease: "back.out(1.8)" }, 12.00);
+
+      // t=14.80 — Watermark fades in quietly
+      tl.to(".watermark",  { autoAlpha: 1, duration: 0.32 }, 14.80);
+
+      // t=15.00 — CTA slams up (early, per feedback)
+      tl.to(".cta",        { autoAlpha: 1, y: 0, scale: 1, duration: 0.56, ease: "back.out(1.8)" }, 15.00);
+
+      // t=15.80 — Safe note
+      tl.to(".safe-note",  { autoAlpha: 1, duration: 0.30 }, 15.80);
+
+      // t=17.20 — CTA pulse #1
+      tl.to(".cta", { scale: 1.022, duration: 0.38, ease: "sine.inOut", yoyo: true, repeat: 1 }, 17.20);
+
+      // t=19.20 — CTA pulse #2 (final frame)
+      tl.to(".cta", { scale: 1.026, duration: 0.32, ease: "sine.inOut", yoyo: true, repeat: 1 }, 19.20);
+
+      // ── Karaoke captions (runs only when TRANSCRIPT is populated) ──────────
+      CAPTION_GROUPS.forEach(function(group, gi) {
+        var groupEl = document.getElementById("cg-" + gi);
+        if (!groupEl) return;
+
+        // Hard-set hidden before enter, then reveal
+        tl.set(groupEl, { opacity: 0, visibility: "hidden" }, Math.max(0, group.start - 0.01));
+        tl.set(groupEl, { visibility: "visible" }, group.start);
+        tl.to(groupEl, { opacity: 1, duration: 0.12, ease: "power1.out" }, group.start);
+
+        // Per-word karaoke highlight
+        group.words.forEach(function(word, wi) {
+          var wordId = "#cw-" + gi + "-" + wi;
+          var nextStart = group.words[wi + 1] ? group.words[wi + 1].start : word.end;
+          // Activate: yellow + slight scale
+          tl.to(wordId, { color: "#f5c518", scale: 1.08, duration: 0.05, ease: "power1.out" }, word.start);
+          // Deactivate: back to white when next word starts
+          tl.to(wordId, { color: "rgba(255,255,255,0.78)", scale: 1, duration: 0.10, ease: "power1.in" }, nextStart);
+        });
+
+        // Group exit + hard kill
+        tl.to(groupEl, { opacity: 0, scale: 0.96, duration: 0.12, ease: "power2.in" }, group.end - 0.12);
+        tl.set(groupEl, { opacity: 0, visibility: "hidden" }, group.end);
+      });
+
+      return tl;
+    }
+
+    // ── Caption layer builder ────────────────────────────────────────────────
+    var TRANSCRIPT = window.__TRANSCRIPT__ || [];
+    var CAPTION_GROUPS = [];
+
+    function groupWords(words, maxPerGroup) {
+      var groups = [];
+      var current = [];
+      for (var i = 0; i < words.length; i++) {
+        current.push(words[i]);
+        var atMax      = current.length >= maxPerGroup;
+        var atPunct    = /[.!?,;]$/.test(words[i].text.trim()) && current.length >= 3;
+        var isLast     = i === words.length - 1;
+        if (atMax || atPunct || isLast) {
+          groups.push({
+            words: current.slice(),
+            start: current[0].start,
+            end:   current[current.length - 1].end
+          });
+          current = [];
+        }
+      }
+      return groups;
+    }
+
+    function buildCaptionLayer() {
+      if (!TRANSCRIPT.length) return;
+      CAPTION_GROUPS = groupWords(TRANSCRIPT, 5);
+      var layer = document.getElementById("caption-layer");
+
+      CAPTION_GROUPS.forEach(function(group, gi) {
+        var groupEl = document.createElement("div");
+        groupEl.id        = "cg-" + gi;
+        groupEl.className = "caption-group";
+
+        group.words.forEach(function(word, wi) {
+          var span = document.createElement("span");
+          span.id        = "cw-" + gi + "-" + wi;
+          span.className = "caption-word";
+          span.textContent = (wi > 0 ? " " : "") + word.text;
+          groupEl.appendChild(span);
+        });
+
+        // Fit font to max width (falls back gracefully if API not available)
+        if (window.__hyperframes && window.__hyperframes.fitTextFontSize) {
+          var text = group.words.map(function(w) { return w.text; }).join(" ");
+          var fit  = window.__hyperframes.fitTextFontSize(text, {
+            fontFamily:   "Inter",
+            fontWeight:   700,
+            maxWidth:     920,
+            baseFontSize: 50,
+            minFontSize:  30
+          });
+          groupEl.style.fontSize = fit.fontSize + "px";
+        }
+
+        layer.appendChild(groupEl);
+      });
+    }
+
+    window.__timelines = window.__timelines || {};
+    buildCaptionLayer();
+    window.__timelines["prematch-prediction"] = buildTimeline();
+  </script>
+</body>
+</html>

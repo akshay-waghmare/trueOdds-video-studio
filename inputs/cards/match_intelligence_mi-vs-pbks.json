@@ -1,0 +1,186 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-05-14T12:22:13+00:00",
+  "match": "MI vs PBKS",
+  "teams": {
+    "team1": {
+      "abbr": "MI",
+      "name": "Mumbai Indians"
+    },
+    "team2": {
+      "abbr": "PBKS",
+      "name": "Punjab Kings"
+    }
+  },
+  "venue": {
+    "requested": "Himachal Pradesh Cricket Association Stadium, Dharamsala",
+    "canonical": "Himachal Pradesh Cricket Association Stadium, Dharamsala",
+    "summary": {
+      "venue": "Himachal Pradesh Cricket Association Stadium, Dharamsala",
+      "matches": 15,
+      "completed_matches": 15,
+      "avg_first_innings_score": 189.0,
+      "avg_first_innings_wickets": 5.07,
+      "historical_second_innings_win_rate": 0.4,
+      "batting_first_win_rate": 0.6,
+      "toss_winner_win_rate": 0.47,
+      "choose_to_bowl_rate_after_winning_toss": 0.93,
+      "powerplay_wickets_per_innings": 1.5,
+      "powerplay_wicket_pct": 0.24,
+      "middle_wicket_pct": 0.38,
+      "death_wicket_pct": 0.38,
+      "death_over_economy": 11.48,
+      "venue_behaviour": "batting-friendly",
+      "best_player_types": [
+        "top-order hitters",
+        "death hitters"
+      ],
+      "confidence": "medium",
+      "pace_wicket_pct": null,
+      "spin_wicket_pct": null
+    }
+  },
+  "prediction": {
+    "source": "historical_blend_v1",
+    "method": "50% overall + 50% H2H",
+    "team1": "MI",
+    "team2": "PBKS",
+    "model_pick": "MI",
+    "probability": 52,
+    "inputs": {
+      "overall_team1_win_rate": 0.552,
+      "h2h_team1_win_rate": 0.4857,
+      "venue_team1_win_rate": 0.0,
+      "venue_sample": 1,
+      "h2h_sample": 35
+    }
+  },
+  "player_signal_filter": {
+    "active_cutoff_year": 2025,
+    "latest_dataset_year": 2026,
+    "rule": "only players seen for their current team in the latest two IPL seasons in the local dataset"
+  },
+  "toss_impact": {
+    "historical_second_innings_win_rate": 0.4,
+    "toss_winner_win_rate": 0.47,
+    "choose_to_bowl_rate_after_winning_toss": 0.93,
+    "confidence": "medium"
+  },
+  "expected_score": {
+    "first_innings_average": 189.0,
+    "confidence": "medium"
+  },
+  "expected_wickets": {
+    "first_innings_average": 5.07,
+    "powerplay_wickets_per_innings": 1.5,
+    "confidence": "medium"
+  },
+  "venue_behaviour": "batting-friendly",
+  "safe_players": [
+    {
+      "player_id": "740742ef",
+      "display_name": "RG Sharma",
+      "team": "Mumbai Indians",
+      "tags": [
+        "finisher",
+        "death specialist",
+        "form cold"
+      ],
+      "confidence": "high",
+      "reason": "880 runs in 32 innings vs Punjab Kings"
+    },
+    {
+      "player_id": "d9273ee7",
+      "display_name": "MP Stoinis",
+      "team": "Punjab Kings",
+      "tags": [
+        "aggressor",
+        "finisher",
+        "powerplay bowler",
+        "death specialist"
+      ],
+      "confidence": "high",
+      "reason": "352 runs in 16 innings vs Mumbai Indians"
+    },
+    {
+      "player_id": "85ec8e33",
+      "display_name": "SS Iyer",
+      "team": "Punjab Kings",
+      "tags": [
+        "anchor",
+        "finisher",
+        "form cold"
+      ],
+      "confidence": "high",
+      "reason": "567 runs in 21 innings vs Mumbai Indians"
+    }
+  ],
+  "risky_players": [
+    {
+      "player_id": "dbe50b21",
+      "display_name": "HH Pandya",
+      "team": "Mumbai Indians",
+      "tags": [
+        "aggressor",
+        "finisher",
+        "powerplay bowler",
+        "death specialist"
+      ],
+      "confidence": "high",
+      "reason": "311 runs in 18 innings vs Punjab Kings"
+    },
+    {
+      "player_id": "26989d80",
+      "display_name": "Shashank Singh",
+      "team": "Punjab Kings",
+      "tags": [
+        "aggressor",
+        "finisher",
+        "form cold"
+      ],
+      "confidence": "high",
+      "reason": "97 runs in 4 innings at Himachal Pradesh Cricket Association Stadium, Dharamsala"
+    },
+    {
+      "player_id": "e66732f8",
+      "display_name": "RD Rickelton",
+      "team": "Mumbai Indians",
+      "tags": [
+        "aggressor",
+        "powerplay aggressor",
+        "form hot"
+      ],
+      "confidence": "high",
+      "reason": "Profile tags: aggressor, powerplay aggressor"
+    }
+  ],
+  "trump_pick": {
+    "player_id": "57ee1fde",
+    "display_name": "YS Chahal",
+    "team": "Punjab Kings",
+    "tags": [
+      "powerplay bowler",
+      "death specialist",
+      "form hot"
+    ],
+    "confidence": "high",
+    "reason": "30 wickets in 22 innings vs Mumbai Indians"
+  },
+  "avoid_pick": {
+    "player_id": "271f83cd",
+    "display_name": "SA Yadav",
+    "team": "Mumbai Indians",
+    "tags": [
+      "aggressor",
+      "finisher",
+      "powerplay aggressor",
+      "form cold"
+    ],
+    "confidence": "high",
+    "reason": "Recent form flag is cold against the model context"
+  },
+  "notes": [
+    "This output is descriptive intelligence, not a fantasy optimizer.",
+    "Venue behaviour is inferred from historical scoring and wicket patterns."
+  ]
+}

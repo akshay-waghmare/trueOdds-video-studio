@@ -1,0 +1,32 @@
+{
+  "template": "toss_update",
+  "language": "hinglish",
+  "title": "Toss update",
+  "match": "Mumbai Indians vs Punjab Kings",
+  "venue": "Himachal Pradesh Cricket Association Stadium, Dharamsala",
+  "public_team": "Punjab Kings",
+  "model_pick": "Mumbai Indians",
+  "probability": 52,
+  "hook_variants": [
+    "Toss aa gaya. Model phir bhi calm raha.",
+    "Crowd zyada react hui, numbers utne nahi hile.",
+    "Toss hua, par real edge zyada shift nahi hui."
+  ],
+  "cta_mode": "join_telegram",
+  "cta_text": "Full match reads ke liye toss se pehle Telegram join karo.",
+  "voiceover": "Toss in. No major toss swing. Model still treated it as a close game. Public sentiment stayed more aggressive than the numbers. Toss did not turn this into a safe one-sided call. Full match reads ke liye toss se pehle Telegram join karo.",
+  "caption": "Mumbai Indians vs Punjab Kings toss update.\nToss in.\nProbability: 52% -> 52%.\n-> No major toss swing\n-> Model still treated it as a close game\n-> Public sentiment stayed more aggressive than the numbers\n\nLesson: Toss did not turn this into a safe one-sided call.\n\nFull match reads ke liye toss se pehle Telegram join karo.",
+  "generated_at": "2026-05-18T14:16:45+00:00",
+  "snapshot": {
+    "snapshot_label": "Toss in",
+    "score": "Before first ball",
+    "probability_before": 52,
+    "probability_after": 52,
+    "signals": [
+      "No major toss swing",
+      "Model still treated it as a close game",
+      "Public sentiment stayed more aggressive than the numbers"
+    ],
+    "lesson": "Toss did not turn this into a safe one-sided call."
+  }
+}

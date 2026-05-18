@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trueoddsml.local/schemas/match_prediction.schema.json",
+  "title": "TrueOddsML Match Prediction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "match",
+    "public_team",
+    "model_pick",
+    "probability",
+    "reasons",
+    "cta"
+  ],
+  "properties": {
+    "template": {
+      "type": "string",
+      "const": "prematch_prediction"
+    },
+    "match": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 80,
+      "examples": ["MI vs KKR"]
+    },
+    "public_team": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 20,
+      "examples": ["MI"]
+    },
+    "model_pick": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 20,
+      "examples": ["KKR"]
+    },
+    "probability": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "examples": [62]
+    },
+    "reasons": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 80
+      },
+      "examples": [
+        [
+          "Better death bowling",
+          "Venue supports their batting style",
+          "Market hype is too high on MI"
+        ]
+      ]
+    },
+    "cta": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 160,
+      "examples": [
+        "This is not baba prediction. This is probability. Follow TrueOddsML."
+      ]
+    }
+  }
+}

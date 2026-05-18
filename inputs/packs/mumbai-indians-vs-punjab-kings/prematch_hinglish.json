@@ -1,0 +1,25 @@
+{
+  "template": "prematch",
+  "language": "hinglish",
+  "title": "Pre-match read",
+  "match": "Mumbai Indians vs Punjab Kings",
+  "venue": "Himachal Pradesh Cricket Association Stadium, Dharamsala",
+  "public_team": "Punjab Kings",
+  "model_pick": "Mumbai Indians",
+  "probability": 52,
+  "hook_variants": [
+    "Casual fans ne is match ko simple samjha.",
+    "Public Punjab Kings ke saath thi. Model Mumbai Indians ki side tha.",
+    "Yeh kabhi bhi safe one-sided 52 plus call nahi tha."
+  ],
+  "cta_mode": "join_telegram",
+  "cta_text": "Full match reads ke liye toss se pehle Telegram join karo.",
+  "voiceover": "Public Punjab Kings ke saath hai. Hamara model Mumbai Indians ko 52 percent par lean karta hai. Historical blend kept the match close instead of one-sided. Venue sample did not support blind crowd confidence. Pressure windows were more important than headline score. Full match reads ke liye toss se pehle Telegram join karo.",
+  "caption": "Mumbai Indians vs Punjab Kings pre-match read.\nPublic side: Punjab Kings.\nModel side: Mumbai Indians at 52%.\n-> Historical blend kept the match close instead of one-sided\n-> Venue sample did not support blind crowd confidence\n-> Pressure windows were more important than headline score\n\nFull match reads ke liye toss se pehle Telegram join karo.",
+  "generated_at": "2026-05-18T14:16:45+00:00",
+  "reasons": [
+    "Historical blend kept the match close instead of one-sided",
+    "Venue sample did not support blind crowd confidence",
+    "Pressure windows were more important than headline score"
+  ]
+}

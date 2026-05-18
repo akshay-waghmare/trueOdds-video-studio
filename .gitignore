@@ -1,0 +1,11 @@
+.render-cache/
+node_modules/
+npm-debug.log*
+.env
+.focus/
+__pycache__/
+.pytest_cache/
+
+renders/*.mp4
+renders/screenshots/*.jpg
+renders/*.jpg

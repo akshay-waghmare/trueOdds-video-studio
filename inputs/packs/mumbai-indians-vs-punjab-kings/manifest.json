@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-05-18T14:16:45+00:00",
+  "match": "Mumbai Indians vs Punjab Kings",
+  "output_dir": "C:\\Users\\ADMINS\\Documents\\projects\\trueodds-video-studio\\inputs\\packs\\mumbai-indians-vs-punjab-kings",
+  "cta_mode": "join_telegram",
+  "languages": [
+    "english",
+    "hinglish"
+  ],
+  "assets": [
+    {
+      "stage": "prematch",
+      "language": "english",
+      "path": "C:\\Users\\ADMINS\\Documents\\projects\\trueodds-video-studio\\inputs\\packs\\mumbai-indians-vs-punjab-kings\\prematch_english.json"
+    },
+    {
+      "stage": "prematch",
+      "language": "hinglish",
+      "path": "C:\\Users\\ADMINS\\Documents\\projects\\trueodds-video-studio\\inputs\\packs\\mumbai-indians-vs-punjab-kings\\prematch_hinglish.json"
+    },
+    {
+      "stage": "toss_update",
+      "language": "english",
+      "path": "C:\\Users\\ADMINS\\Documents\\projects\\trueodds-video-studio\\inputs\\packs\\mumbai-indians-vs-punjab-kings\\toss_update_english.json"
+    },
+    {
+      "stage": "toss_update",
+      "language": "hinglish",
+      "path": "C:\\Users\\ADMINS\\Documents\\projects\\trueodds-video-studio\\inputs\\packs\\mumbai-indians-vs-punjab-kings\\toss_update_hinglish.json"
+    },
+    {
+      "stage": "turning_point",
+      "language": "english",
+      "path": "C:\\Users\\ADMINS\\Documents\\projects\\trueodds-video-studio\\inputs\\packs\\mumbai-indians-vs-punjab-kings\\turning_point_english.json"
+    },
+    {
+      "stage": "turning_point",
+      "language": "hinglish",
+      "path": "C:\\Users\\ADMINS\\Documents\\projects\\trueodds-video-studio\\inputs\\packs\\mumbai-indians-vs-punjab-kings\\turning_point_hinglish.json"
+    },
+    {
+      "stage": "probability_swing",
+      "language": "english",
+      "path": "C:\\Users\\ADMINS\\Documents\\projects\\trueodds-video-studio\\inputs\\packs\\mumbai-indians-vs-punjab-kings\\probability_swing_english.json"
+    },
+    {
+      "stage": "probability_swing",
+      "language": "hinglish",
+      "path": "C:\\Users\\ADMINS\\Documents\\projects\\trueodds-video-studio\\inputs\\packs\\mumbai-indians-vs-punjab-kings\\probability_swing_hinglish.json"
+    },
+    {
+      "stage": "post_match_proof",
+      "language": "english",
+      "path": "C:\\Users\\ADMINS\\Documents\\projects\\trueodds-video-studio\\inputs\\packs\\mumbai-indians-vs-punjab-kings\\post_match_proof_english.json"
+    },
+    {
+      "stage": "post_match_proof",
+      "language": "hinglish",
+      "path": "C:\\Users\\ADMINS\\Documents\\projects\\trueodds-video-studio\\inputs\\packs\\mumbai-indians-vs-punjab-kings\\post_match_proof_hinglish.json"
+    },
+    {
+      "stage": "market_edge_replay",
+      "language": "english",
+      "path": "C:\\Users\\ADMINS\\Documents\\projects\\trueodds-video-studio\\inputs\\packs\\mumbai-indians-vs-punjab-kings\\market_edge_replay_english.json"
+    },
+    {
+      "stage": "market_edge_replay",
+      "language": "hinglish",
+      "path": "C:\\Users\\ADMINS\\Documents\\projects\\trueodds-video-studio\\inputs\\packs\\mumbai-indians-vs-punjab-kings\\market_edge_replay_hinglish.json"
+    }
+  ],
+  "skipped_stages": []
+}

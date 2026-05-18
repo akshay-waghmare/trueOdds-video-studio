@@ -1,0 +1,178 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-05-14T12:17:19+00:00",
+  "match": "GT vs SRH",
+  "teams": {
+    "team1": {
+      "abbr": "GT",
+      "name": "Gujarat Titans"
+    },
+    "team2": {
+      "abbr": "SRH",
+      "name": "Sunrisers Hyderabad"
+    }
+  },
+  "venue": {
+    "requested": "Ahmedabad",
+    "canonical": "Narendra Modi Stadium",
+    "summary": {
+      "venue": "Narendra Modi Stadium",
+      "matches": 39,
+      "completed_matches": 38,
+      "avg_first_innings_score": 185.49,
+      "avg_first_innings_wickets": 6.41,
+      "historical_second_innings_win_rate": 0.5,
+      "batting_first_win_rate": 0.5,
+      "toss_winner_win_rate": 0.46,
+      "choose_to_bowl_rate_after_winning_toss": 0.79,
+      "powerplay_wickets_per_innings": 1.53,
+      "powerplay_wicket_pct": 0.24,
+      "middle_wicket_pct": 0.39,
+      "death_wicket_pct": 0.37,
+      "death_over_economy": 10.55,
+      "venue_behaviour": "batting-friendly and chaseable",
+      "best_player_types": [
+        "top-order hitters",
+        "death hitters"
+      ],
+      "confidence": "high",
+      "pace_wicket_pct": null,
+      "spin_wicket_pct": null
+    }
+  },
+  "prediction": {
+    "source": "historical_blend_v1",
+    "method": "35% overall + 35% H2H + 30% venue",
+    "team1": "GT",
+    "team2": "SRH",
+    "model_pick": "GT",
+    "probability": 71,
+    "inputs": {
+      "overall_team1_win_rate": 0.3103,
+      "h2h_team1_win_rate": 0.8571,
+      "venue_team1_win_rate": 1.0,
+      "venue_sample": 4,
+      "h2h_sample": 7
+    }
+  },
+  "toss_impact": {
+    "historical_second_innings_win_rate": 0.5,
+    "toss_winner_win_rate": 0.46,
+    "choose_to_bowl_rate_after_winning_toss": 0.79,
+    "confidence": "high"
+  },
+  "expected_score": {
+    "first_innings_average": 185.49,
+    "confidence": "high"
+  },
+  "expected_wickets": {
+    "first_innings_average": 6.41,
+    "powerplay_wickets_per_innings": 1.53,
+    "confidence": "high"
+  },
+  "venue_behaviour": "batting-friendly and chaseable",
+  "safe_players": [
+    {
+      "player_id": "b4b99816",
+      "display_name": "Shubman Gill",
+      "team": "Gujarat Titans",
+      "tags": [
+        "finisher"
+      ],
+      "confidence": "high",
+      "reason": "1310 runs in 30 innings at Narendra Modi Stadium"
+    },
+    {
+      "player_id": "d5130a30",
+      "display_name": "B Sai Sudharsan",
+      "team": "Gujarat Titans",
+      "tags": [
+        "aggressor",
+        "finisher",
+        "powerplay aggressor",
+        "form hot"
+      ],
+      "confidence": "high",
+      "reason": "1187 runs in 25 innings at Narendra Modi Stadium"
+    },
+    {
+      "player_id": "e62dd25d",
+      "display_name": "K Rabada",
+      "team": "Gujarat Titans",
+      "tags": [
+        "powerplay bowler",
+        "death specialist",
+        "form hot"
+      ],
+      "confidence": "high",
+      "reason": "44 runs in 4 innings at Narendra Modi Stadium"
+    }
+  ],
+  "risky_players": [
+    {
+      "player_id": "5f547c8b",
+      "display_name": "Rashid Khan",
+      "team": "Gujarat Titans",
+      "tags": [
+        "aggressor",
+        "finisher",
+        "powerplay bowler",
+        "death specialist"
+      ],
+      "confidence": "high",
+      "reason": "125 runs in 17 innings at Narendra Modi Stadium"
+    },
+    {
+      "player_id": "f19ccfad",
+      "display_name": "Washington Sundar",
+      "team": "Gujarat Titans",
+      "tags": [
+        "powerplay bowler",
+        "death specialist",
+        "form hot"
+      ],
+      "confidence": "high",
+      "reason": "172 runs in 9 innings at Narendra Modi Stadium"
+    },
+    {
+      "player_id": "9fc0ef64",
+      "display_name": "PJ Sangwan",
+      "team": "Gujarat Titans",
+      "tags": [
+        "powerplay bowler",
+        "death specialist",
+        "form hot"
+      ],
+      "confidence": "high",
+      "reason": "Profile tags: powerplay bowler, death specialist"
+    }
+  ],
+  "trump_pick": {
+    "player_id": "5f547c8b",
+    "display_name": "Rashid Khan",
+    "team": "Gujarat Titans",
+    "tags": [
+      "aggressor",
+      "finisher",
+      "powerplay bowler",
+      "death specialist"
+    ],
+    "confidence": "high",
+    "reason": "125 runs in 17 innings at Narendra Modi Stadium"
+  },
+  "avoid_pick": {
+    "player_id": "752f7486",
+    "display_name": "Ishan Kishan",
+    "team": "Sunrisers Hyderabad",
+    "tags": [
+      "finisher",
+      "form cold"
+    ],
+    "confidence": "high",
+    "reason": "Profile tags: finisher, form cold"
+  },
+  "notes": [
+    "This output is descriptive intelligence, not a fantasy optimizer.",
+    "Venue behaviour is inferred from historical scoring and wicket patterns."
+  ]
+}

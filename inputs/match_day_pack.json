@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0.0",
+  "match": "Mumbai Indians vs Punjab Kings",
+  "venue": "Himachal Pradesh Cricket Association Stadium, Dharamsala",
+  "public_team": "Punjab Kings",
+  "model_pick": "Mumbai Indians",
+  "probability": 52,
+  "reasons": [
+    "Historical blend kept the match close instead of one-sided",
+    "Venue sample did not support blind crowd confidence",
+    "Pressure windows were more important than headline score"
+  ],
+  "cta_mode": "join_telegram",
+  "languages": [
+    "english",
+    "hinglish"
+  ],
+  "toss_update": {
+    "snapshot_label": "Toss in",
+    "score": "Before first ball",
+    "probability_before": 52,
+    "probability_after": 52,
+    "signals": [
+      "No major toss swing",
+      "Model still treated it as a close game",
+      "Public sentiment stayed more aggressive than the numbers"
+    ],
+    "lesson": "Toss did not turn this into a safe one-sided call."
+  },
+  "turning_point": {
+    "snapshot_label": "82/1 after 9 overs",
+    "score": "82/1 after 9.0 overs",
+    "probability_before": 62,
+    "probability_after": 48,
+    "signals": [
+      "Required rate started climbing",
+      "Dot-ball pressure was building",
+      "The venue was not easing the chase"
+    ],
+    "lesson": "The collapse was not sudden. The pressure was visible before the wicket."
+  },
+  "probability_swing": {
+    "snapshot_label": "One over swing",
+    "score": "118/2 after 13.4 overs",
+    "probability_before": 64,
+    "probability_after": 47,
+    "signals": [
+      "Set batter gone",
+      "Dot-ball cluster",
+      "Required rate spike"
+    ],
+    "lesson": "One over can change the match before the crowd updates its belief."
+  },
+  "post_match_proof": {
+    "winner": "Punjab Kings",
+    "result_label": "tight_read",
+    "audit_note": "The model did not call this a safe mismatch. The result still stayed close to the original 52-48 framing."
+  },
+  "market_edge_replay": {
+    "snapshot_label": "Mid-chase divergence",
+    "model_probability_before": 62,
+    "model_probability_after": 48,
+    "public_probability_before": 71,
+    "public_probability_after": 56,
+    "edge_reason": "Public confidence stayed too high for too long while pressure signals were already visible.",
+    "risk_note": "Educational replay only. This is about probability reading, not guaranteed returns."
+  }
+}

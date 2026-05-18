@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TrueOddsML Match Day Pack",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "match",
+    "public_team",
+    "model_pick",
+    "probability",
+    "reasons",
+    "cta_mode",
+    "languages"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "match": {
+      "type": "string",
+      "minLength": 3
+    },
+    "venue": {
+      "type": "string"
+    },
+    "public_team": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model_pick": {
+      "type": "string",
+      "minLength": 1
+    },
+    "probability": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "reasons": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": {
+        "type": "string",
+        "minLength": 3
+      }
+    },
+    "cta_mode": {
+      "type": "string",
+      "enum": [
+        "follow",
+        "comment_match",
+        "join_telegram",
+        "check_live_score"
+      ]
+    },
+    "languages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": [
+          "english",
+          "hinglish"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "toss_update": {
+      "$ref": "#/$defs/stageWithSignals"
+    },
+    "turning_point": {
+      "$ref": "#/$defs/stageWithSignals"
+    },
+    "probability_swing": {
+      "$ref": "#/$defs/stageWithSignals"
+    },
+    "post_match_proof": {
+      "type": "object",
+      "required": [
+        "winner",
+        "result_label",
+        "audit_note"
+      ],
+      "properties": {
+        "winner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "result_label": {
+          "type": "string",
+          "enum": [
+            "hit",
+            "miss",
+            "tight_read"
+          ]
+        },
+        "audit_note": {
+          "type": "string",
+          "minLength": 5
+        }
+      },
+      "additionalProperties": false
+    },
+    "market_edge_replay": {
+      "type": "object",
+      "required": [
+        "snapshot_label",
+        "model_probability_before",
+        "model_probability_after",
+        "public_probability_before",
+        "public_probability_after",
+        "edge_reason"
+      ],
+      "properties": {
+        "snapshot_label": {
+          "type": "string",
+          "minLength": 3
+        },
+        "model_probability_before": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "model_probability_after": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "public_probability_before": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "public_probability_after": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "edge_reason": {
+          "type": "string",
+          "minLength": 5
+        },
+        "risk_note": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "stageWithSignals": {
+      "type": "object",
+      "required": [
+        "snapshot_label",
+        "probability_before",
+        "probability_after",
+        "signals",
+        "lesson"
+      ],
+      "properties": {
+        "snapshot_label": {
+          "type": "string",
+          "minLength": 3
+        },
+        "score": {
+          "type": "string"
+        },
+        "probability_before": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "probability_after": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "signals": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        },
+        "lesson": {
+          "type": "string",
+          "minLength": 5
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

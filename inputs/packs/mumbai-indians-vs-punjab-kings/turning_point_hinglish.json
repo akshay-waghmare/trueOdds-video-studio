@@ -1,0 +1,32 @@
+{
+  "template": "turning_point",
+  "language": "hinglish",
+  "title": "Turning point",
+  "match": "Mumbai Indians vs Punjab Kings",
+  "venue": "Himachal Pradesh Cricket Association Stadium, Dharamsala",
+  "public_team": "Punjab Kings",
+  "model_pick": "Mumbai Indians",
+  "probability": 52,
+  "hook_variants": [
+    "Yahi asli turning point tha.",
+    "82/1 after 9 overs par scoreboard theek lag raha tha. Pressure nahi.",
+    "Wicket baad mein aayi. Warning pehle se thi."
+  ],
+  "cta_mode": "join_telegram",
+  "cta_text": "Full match reads ke liye toss se pehle Telegram join karo.",
+  "voiceover": "82/1 after 9 overs. Required rate started climbing. Dot-ball pressure was building. The venue was not easing the chase. The collapse was not sudden. The pressure was visible before the wicket. Full match reads ke liye toss se pehle Telegram join karo.",
+  "caption": "Mumbai Indians vs Punjab Kings turning point.\n82/1 after 9 overs.\nProbability: 62% -> 48%.\n-> Required rate started climbing\n-> Dot-ball pressure was building\n-> The venue was not easing the chase\n\nLesson: The collapse was not sudden. The pressure was visible before the wicket.\n\nFull match reads ke liye toss se pehle Telegram join karo.",
+  "generated_at": "2026-05-18T14:16:45+00:00",
+  "snapshot": {
+    "snapshot_label": "82/1 after 9 overs",
+    "score": "82/1 after 9.0 overs",
+    "probability_before": 62,
+    "probability_after": 48,
+    "signals": [
+      "Required rate started climbing",
+      "Dot-ball pressure was building",
+      "The venue was not easing the chase"
+    ],
+    "lesson": "The collapse was not sudden. The pressure was visible before the wicket."
+  }
+}

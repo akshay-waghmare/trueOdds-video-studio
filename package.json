@@ -1,0 +1,12 @@
+{
+  "name": "trueodds-video-studio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TrueOddsML JSON-to-HyperFrames cricket prediction reel pipeline.",
+  "scripts": {
+    "validate": "node scripts/validate-input.js",
+    "render:prematch": "node scripts/render-prematch.js",
+    "inspect": "node scripts/inspect-render.js",
+    "build:pack": "python scripts/build_match_day_pack.py --input inputs/match_day_pack.json"
+  }
+}

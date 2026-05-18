@@ -1,0 +1,25 @@
+{
+  "template": "post_match_proof",
+  "language": "english",
+  "title": "Post-match proof",
+  "match": "Mumbai Indians vs Punjab Kings",
+  "venue": "Himachal Pradesh Cricket Association Stadium, Dharamsala",
+  "public_team": "Punjab Kings",
+  "model_pick": "Mumbai Indians",
+  "probability": 52,
+  "hook_variants": [
+    "Here is the audit, not the hype.",
+    "We called it 52-48, not a fake sure-shot.",
+    "Proof matters more than loud prediction pages."
+  ],
+  "cta_mode": "join_telegram",
+  "cta_text": "Join Telegram before toss for full match reads.",
+  "voiceover": "We originally had Mumbai Indians at 52 percent. Final winner: Punjab Kings. The model did not call this a safe mismatch. The result still stayed close to the original 52-48 framing. Join Telegram before toss for full match reads.",
+  "caption": "Post-match audit for Mumbai Indians vs Punjab Kings.\nModel pick: Mumbai Indians at 52%.\nWinner: Punjab Kings.\nThe model did not call this a safe mismatch. The result still stayed close to the original 52-48 framing.\n\nJoin Telegram before toss for full match reads.",
+  "generated_at": "2026-05-18T14:16:45+00:00",
+  "proof": {
+    "winner": "Punjab Kings",
+    "result_label": "tight_read",
+    "audit_note": "The model did not call this a safe mismatch. The result still stayed close to the original 52-48 framing."
+  }
+}
