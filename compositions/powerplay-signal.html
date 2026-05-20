@@ -535,6 +535,20 @@
       color: rgba(255,255,255,0.65);
     }
 
+    #s6-cta-links {
+      display: flex; gap: 18px; margin-top: 16px;
+      justify-content: center; flex-wrap: wrap;
+    }
+
+    .cta-link-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 999px;
+      font-size: 20px; font-weight: 700; letter-spacing: 0.06em;
+    }
+
+    .cta-link-pill.tg  { background: rgba(0,201,167,0.14); border: 1px solid rgba(0,201,167,0.40); color: var(--teal); }
+    .cta-link-pill.app { background: rgba(245,197,24,0.10); border: 1px solid rgba(245,197,24,0.36); color: var(--yellow); }
+
     #s6-watermark {
       margin-top: 22px;
       font-size: 20px; font-weight: 700;
@@ -754,6 +768,10 @@
         <div id="s6-cta">
           <span id="s6-cta-main">Crickzen TrueOdds</span>
           <span id="s6-cta-sub">Don't guess the match. Read the probability.</span>
+          <div id="s6-cta-links">
+            <span class="cta-link-pill tg">📢 t.me/trueoddsML</span>
+            <span class="cta-link-pill app">🌐 prediction.crickzen.com</span>
+          </div>
         </div>
         <div id="s6-watermark">TrueOddsML &nbsp;&middot;&nbsp; Probability First</div>
       </div>
@@ -892,6 +910,7 @@
     gsap.set("#s6-eyebrow",      { autoAlpha: 0, y: -22 });
     gsap.set("#s6-won",          { autoAlpha: 0, scale: 0.72 });
     gsap.set("#s6-won-team",     { autoAlpha: 0, y: 28 });
+    gsap.set("#s6-cta-links",    { autoAlpha: 0, y: 16 });
     gsap.set("#s6-called",       { autoAlpha: 0 });
     gsap.set("#s6-rule",         { scaleX: 0 });
     gsap.set("#s6-phil-line1",   { autoAlpha: 0, y: 20 });
@@ -1052,7 +1071,8 @@
     tl.fromTo("#s6-phil-line1",   { autoAlpha: 0, y: 20 },   { autoAlpha: 1, y: 0, duration: 0.38, ease: "power3.out" },      S6 + 1.54);
     tl.fromTo("#s6-phil-line2",   { autoAlpha: 0, y: 20 },   { autoAlpha: 1, y: 0, duration: 0.42, ease: "sine.out" },        S6 + 1.80);
     tl.fromTo("#s6-cta",          { autoAlpha: 0, y: 38, scale: 0.93 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.52, ease: "back.out(1.8)" }, S6 + 2.06);
-    tl.fromTo("#s6-watermark",    { autoAlpha: 0 },           { autoAlpha: 1, duration: 0.30, ease: "power1.out" },            S6 + 2.38);
+    tl.fromTo("#s6-cta-links",   { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.40, ease: "power2.out" },            S6 + 2.30);
+    tl.fromTo("#s6-watermark",    { autoAlpha: 0 },           { autoAlpha: 1, duration: 0.30, ease: "power1.out" },            S6 + 2.60);
     // CTA pulse
     tl.to("#s6-cta", { scale: 1.022, duration: 0.34, ease: "sine.inOut", yoyo: true, repeat: 1 },                              S6 + 2.60);
 
