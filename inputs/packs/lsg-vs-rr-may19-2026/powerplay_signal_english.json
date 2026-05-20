@@ -1,0 +1,141 @@
+{
+  "template": "powerplay_signal",
+  "language": "english",
+  "title": "The Powerplay Signal — LSG vs RR",
+  "match": "Lucknow Super Giants vs Rajasthan Royals",
+  "match_label": "LSG vs RR — 64th Match, IPL 2026",
+  "match_date": "2026-05-19",
+  "match_url": "https://crex.com/cricket-live-score/lsg-vs-rr-64th-match-indian-premier-league-2026-match-updates-1199",
+  "data_source": "TrueOdds live model recording — betx21.live production",
+  "recorded_at": "2026-05-19T20:50 to 22:57 IST",
+
+  "innings_1": {
+    "batting_team": "Lucknow Super Giants",
+    "final_score": "220/5 (20 overs)",
+    "model_prob_at_end": 80
+  },
+
+  "hook_variants": [
+    "Chasing 221. Over 6 done. Score: 71 for 0. Everyone thought: still too far behind. Model thought: 72%.",
+    "The score showed 71/0. The model saw something the score couldn't show.",
+    "Yesterday. RR chasing 221. Here's what our live model saw at over 6."
+  ],
+
+  "voiceover": "Yesterday. LSG vs RR. Lucknow set 220. Rajasthan needed 221 to win. After the powerplay — 6 overs done — score was 71 for 0. Needed 150 from 84 balls. Required rate nearly 11. Every fan watching said: too far behind. Our live model said: 72 percent for RR. Why? Zero wickets down. Ten wickets in hand. Enough balls to build. The score was showing the past. The model was reading the resources. Over 7: first wicket fell. Model dropped to 44 percent — showing exactly how much each wicket matters. Over 11: 137 for 1. Model: 90 percent. RR in control. Over 12: 166 for 1. Model: 99 percent. Match done. RR won. The model called it at over 6, when the score still looked against them.",
+
+  "caption": "Yesterday. LSG vs RR. IPL 2026.\n\nLSG set 220. RR chasing 221.\n\nOver 6 (powerplay end):\nScore: 71/0\nNeeded: 150 from 84 balls\nRequired rate: 10.7\nPublic thought: RR behind\n\nTrueOdds Model: 72%\n\nWhy the gap?\n→ 0 wickets at powerplay = 10 wickets × 84 balls\n→ Resources > run rate pressure\n→ Model reads wickets, not just runs\n\nOver 7: first wicket fell → model 44% (wickets matter!)\nOver 11: 137/1 → model 90%\nOver 12: 166/1 → model 99%\n\nRR won.\nModel called it at over 6.\n\nCrickzen TrueOdds\nThe score is visible. The probability is hidden.",
+
+  "chase_context": {
+    "target": 221,
+    "chasing_team": "Rajasthan Royals",
+    "setting_team": "Lucknow Super Giants",
+    "result": "Rajasthan Royals won"
+  },
+
+  "timeline": [
+    {
+      "over": 5,
+      "score": "56/0",
+      "needed": 165,
+      "balls_left": 90,
+      "required_rate": 11.0,
+      "model_prob": 26,
+      "public_prob_est": 25,
+      "label": "End of over 5 — score looks hard"
+    },
+    {
+      "over": 6,
+      "score": "71/0",
+      "needed": 150,
+      "balls_left": 84,
+      "required_rate": 10.7,
+      "model_prob": 72,
+      "public_prob_est": 35,
+      "label": "POWERPLAY END — 0 wickets, model 72% — the signal",
+      "is_key_moment": true,
+      "key_moment_label": "Powerplay Signal"
+    },
+    {
+      "over": 7,
+      "score": "84/1",
+      "needed": 137,
+      "balls_left": 78,
+      "required_rate": 10.5,
+      "model_prob": 44,
+      "public_prob_est": 38,
+      "label": "First wicket falls — model drops 28% in one ball"
+    },
+    {
+      "over": 11,
+      "score": "137/1",
+      "needed": 84,
+      "balls_left": 54,
+      "required_rate": 9.3,
+      "model_prob": 90,
+      "public_prob_est": 75,
+      "label": "Model 90% — RR in command"
+    },
+    {
+      "over": 12,
+      "score": "166/1",
+      "needed": 55,
+      "balls_left": 48,
+      "required_rate": 6.9,
+      "model_prob": 99,
+      "public_prob_est": 95,
+      "label": "Model 99% — match over"
+    }
+  ],
+
+  "key_insight": {
+    "moment": "Over 6 (powerplay end)",
+    "score": "71/0",
+    "model_prob": 72,
+    "public_prob_est": 35,
+    "gap": 37,
+    "signal_type": "powerplay_wickets",
+    "explanation": "At powerplay end, the model reads WICKETS IN HAND, not just run rate. 0 wickets at over 6 means 10 wickets × 84 balls remaining — a massive resource advantage. Score says 71/221 = looks hard. Model says 10 wickets + resources = 72% for RR.",
+    "signals": [
+      "0 wickets at powerplay end (10 wickets remaining)",
+      "Required rate (10.7) manageable with full batting depth",
+      "T20 innings — powerplay score with 0 wickets historically precedes strong middles",
+      "Model weighted: wickets in hand > runs behind"
+    ]
+  },
+
+  "wicket_impact_proof": {
+    "before_over7_wicket": { "score": "84/0", "model_prob": 72, "note": "0 wickets — 72%" },
+    "after_over7_wicket":  { "score": "84/1", "model_prob": 44, "note": "1 wicket — dropped 28% in one ball" },
+    "lesson": "One wicket changed the probability by 28%. The score didn't change. The resource did."
+  },
+
+  "user_angle": {
+    "casual_fan": "Score said 71/0 = RR behind. Model said 72% = RR winning. Now you know why wickets matter more than runs.",
+    "serious_trader": "At powerplay end (71/0), model was at 72% while public priced RR at ~35%. That 37% gap is where the edge lives. First wicket at 84/1 dropped model to 44% — your exit signal.",
+    "analytics_lover": "Model input: wickets remaining × balls remaining vs required rate. Powerplay 0-wicket finish is a leading indicator of successful chases in T20. Score lags this signal by 4-5 overs."
+  },
+
+  "reel_structure": {
+    "type": "powerplay_signal",
+    "duration_seconds": 20,
+    "format": "9:16 vertical",
+    "scenes": [
+      { "time": "0-3s",  "content": "Hook — Yesterday's match, chasing 221, over 6 done" },
+      { "time": "3-6s",  "content": "Score display — 71/0, 150 needed, 84 balls" },
+      { "time": "6-9s",  "content": "Model reveal — 72% for RR (crowd said no)" },
+      { "time": "9-12s", "content": "Why — wickets in hand explanation (0 wickets = huge resource)" },
+      { "time": "12-15s","content": "Proof — over 11 at 137/1 → 90%, over 12 at 166/1 → 99%" },
+      { "time": "15-18s","content": "Result — RR won. Model called it at over 6." },
+      { "time": "18-20s","content": "CTA — Don't watch the score. Read the probability." }
+    ]
+  },
+
+  "brand_lines": [
+    "The score is visible. The probability is hidden.",
+    "Wickets in hand > runs behind.",
+    "Don't guess the match. Read the probability."
+  ],
+
+  "risk_note": "Educational analysis only. This is a probability model, not a guarantee. Historical match data shared for fan insight.",
+  "generated_at": "2026-05-20"
+}

@@ -1,0 +1,105 @@
+{
+  "template": "market_edge_replay",
+  "language": "english",
+  "title": "The Entry Window — RCB vs SRH",
+  "match": "Royal Challengers Bangalore vs Sunrisers Hyderabad",
+  "venue": "MA Chidambaram Stadium, Chepauk, Chennai",
+  "match_date": "2021-04-14",
+  "cricsheet_file": "1254063.json",
+  "data_source": "Cricsheet IPL JSON (real match data)",
+
+  "public_team": "Sunrisers Hyderabad",
+  "model_pick": "Royal Challengers Bangalore",
+  "probability": 52,
+
+  "hook_variants": [
+    "SRH were at 115/2. The score looked fine. The probability said something else.",
+    "Score went up. Wickets stayed 2. But the probability was quietly falling.",
+    "This is what the score can't show you."
+  ],
+
+  "voiceover": "SRH chasing 150 at Chepauk. Over 14. Score: 102 for 2. Runs coming. No wickets. Everyone thinks: chase is on. But the model read the required rate quietly climbing above 10. Dot-ball pressure. Venue doesn't ease late chases. Probability was already at 79 percent and falling — not rising. Over 15: 67 percent. Over 16: 55 percent. Score still climbing. Wickets still 2. Probability declining. Then over 17: three wickets. One run. Match over. The model saw it. The score didn't show it.",
+
+  "caption": "RCB vs SRH — Chepauk 2021.\nSRH chasing 150.\nOver 14: 102/2 — looked fine.\nModel probability: 79%.\n\nOver 15: 67%\nOver 16: 55%\n→ Score going UP. Wickets SAME. Probability FALLING.\n\nWhy?\n→ Required rate crossing 10 rpo\n→ Dot-ball pressure building\n→ Venue punishes slow scoring in death\n\nOver 17: 0W 0W 0 1 0 0W — 3 wickets, 1 run.\nProb: 19%. Match done.\n\nThe score couldn't show you that.\nThe model could.\n\nCrickzen TrueOdds — The score is visible. The probability is hidden.",
+
+  "generated_at": "2026-05-20T08:43:59+00:00",
+
+  "replay": {
+    "snapshot_label": "Silent probability decline — Over 14 to 17",
+
+    "chase_context": {
+      "target": 150,
+      "chasing_team": "Sunrisers Hyderabad",
+      "setting_team": "Royal Challengers Bangalore",
+      "result": "RCB won by 6 runs"
+    },
+
+    "timeline": [
+      {
+        "over": 14,
+        "score": "102/2",
+        "needed": 48,
+        "balls_left": 32,
+        "required_rate": 9.0,
+        "model_prob": 79,
+        "public_prob_est": 82,
+        "label": "Score looks fine — 2 wickets, runs coming"
+      },
+      {
+        "over": 15,
+        "score": "108/2",
+        "needed": 42,
+        "balls_left": 26,
+        "required_rate": 9.7,
+        "model_prob": 67,
+        "public_prob_est": 72,
+        "label": "Required rate crossing 9.5 — quiet pressure"
+      },
+      {
+        "over": 16,
+        "score": "115/2",
+        "needed": 35,
+        "balls_left": 20,
+        "required_rate": 10.5,
+        "model_prob": 55,
+        "public_prob_est": 65,
+        "label": "Entry window — model 55%, market still 65%"
+      },
+      {
+        "over": 17,
+        "score": "116/5",
+        "needed": 34,
+        "balls_left": 14,
+        "required_rate": 14.6,
+        "model_prob": 19,
+        "public_prob_est": 35,
+        "label": "3 wickets, 1 run — collapse triggered"
+      }
+    ],
+
+    "entry_window": {
+      "over": 16,
+      "score": "115/2",
+      "model_prob": 55,
+      "public_prob_est": 65,
+      "gap": 10,
+      "gap_reason": "Public tracked the score (runs + no wickets). Model tracked required rate crossing 10 rpo + venue death-over difficulty.",
+      "signal_type": "silent_pressure",
+      "signals": [
+        "Required rate crossed 10 rpo",
+        "Dot-ball pressure building since over 12",
+        "Chepauk slow surface punishes high required rates"
+      ]
+    },
+
+    "key_insight": "Score went up every over. No new wickets over 14-16. But probability fell from 79% to 55% silently. The crowd followed the score. The model followed the math.",
+    "risk_note": "Educational replay only. This is about probability reading, not guaranteed returns.",
+    "safe_framing": "Historical analysis. No live trading advice."
+  },
+
+  "user_angle": {
+    "casual_fan": "You would have thought SRH were winning at 115/2. The probability said otherwise 2 overs before the collapse.",
+    "analytics_lover": "Run rate, required rate, and venue death-over data combined into one falling number. That's the edge.",
+    "serious_trader": "At over 16 (115/2), market had SRH at ~65%. Model had 55%. That 10% gap on a close match is the entry window."
+  }
+}
