@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1080, height=1920, initial-scale=1">
+  <title>TrueOddsML - Post-Match Proof</title>
+  <style>
+    :root {
+      --bg:     #0a0a0f;
+      --border: #1e2235;
+      --yellow: #f5c518;
+      --teal:   #00c9a7;
+      --red:    #ff4c4c;
+      --text:   #ffffff;
+      --muted:  #a0a8b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, Poppins, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    #flash-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(245, 197, 24, 0.88);
+      pointer-events: none;
+    }
+
+    .stage {
+      position: relative;
+      width: 1080px;
+      height: 1920px;
+      padding: 72px 74px 76px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(0, 201, 167, 0.12), transparent 30%),
+        radial-gradient(circle at 78% 82%, rgba(245, 197, 24, 0.10), transparent 26%),
+        linear-gradient(165deg, #08080d 0%, #0c1018 60%, #09090f 100%);
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.12;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 72px 72px;
+      transform: rotate(-8deg) scale(1.15);
+    }
+
+    .stage::after {
+      content: "";
+      position: absolute;
+      inset: 34px;
+      border: 1px solid rgba(0, 201, 167, 0.16);
+      border-radius: 44px;
+      pointer-events: none;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* — Eyebrow — */
+    .eyebrow {
+      display: inline-flex;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 22px;
+      border: 1px solid rgba(0, 201, 167, 0.28);
+      border-radius: 999px;
+      color: var(--teal);
+      background: rgba(0, 201, 167, 0.08);
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow-dot {
+      width: 9px;
+      height: 9px;
+      background: var(--teal);
+      border-radius: 50%;
+      animation: blink 1.4s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.15; }
+    }
+
+    .match-label {
+      display: block;
+      margin-top: 14px;
+      color: rgba(255,255,255,0.5);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* — Hook — */
+    .hook {
+      margin-top: 40px;
+      font-size: 60px;
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    /* — Separator — */
+    .separator {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12) 30%, rgba(255,255,255,0.12) 70%, transparent);
+      margin: 36px 0;
+    }
+
+    /* — Section label — */
+    .section-label {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    /* — THE CALL card — */
+    .call-card {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      padding: 32px 36px;
+      border-radius: 28px;
+      border: 1px solid var(--border);
+      background: linear-gradient(145deg, rgba(18,18,30,0.96), rgba(23,24,42,0.92));
+      box-shadow: 0 24px 72px rgba(0,0,0,0.36);
+    }
+
+    .call-team-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 120px;
+      height: 120px;
+      border-radius: 22px;
+      font-size: 42px;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+      color: var(--text);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+      flex-shrink: 0;
+    }
+
+    .call-meta {
+      flex: 1;
+    }
+
+    .call-meta-label {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .call-team-name {
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-top: 6px;
+      line-height: 1.1;
+    }
+
+    .call-prob-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      flex-shrink: 0;
+    }
+
+    .call-prob-value {
+      font-size: 58px;
+      font-weight: 950;
+      letter-spacing: -0.04em;
+      color: var(--yellow);
+      line-height: 1;
+    }
+
+    .call-prob-sub {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* — THE RESULT panel — */
+    .result-panel {
+      padding: 32px 36px;
+      border-radius: 28px;
+      border: 2px solid var(--teal); /* overridden by JS */
+      background: linear-gradient(145deg, rgba(18,18,30,0.96), rgba(23,24,42,0.92));
+      box-shadow: 0 24px 72px rgba(0,0,0,0.36);
+    }
+
+    .result-winner-row {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .result-winner-label {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .result-winner-name {
+      font-size: 52px;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      color: var(--text); /* color set by JS */
+    }
+
+    /* — Result label badge — */
+    .result-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+      padding: 10px 24px;
+      border-radius: 999px;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 1px solid currentColor;
+    }
+
+    .result-badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* — Audit note — */
+    .audit-note {
+      margin-top: 36px;
+      padding: 28px 32px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border-left: 3px solid rgba(255,255,255,0.16);
+      font-size: 30px;
+      font-weight: 600;
+      line-height: 1.5;
+      color: rgba(255,255,255,0.80);
+      font-style: italic;
+    }
+
+    /* — Watermark — */
+    .watermark {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.20);
+    }
+
+    /* — CTA — */
+    .cta {
+      margin-top: 28px;
+      padding: 34px 40px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(0,201,167,0.18), rgba(0,201,167,0.06));
+      border: 1px solid rgba(0,201,167,0.38);
+      text-align: center;
+    }
+
+    .cta-main {
+      display: block;
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--teal);
+    }
+
+    .cta-sub {
+      display: block;
+      margin-top: 10px;
+      font-size: 24px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.70);
+    }
+
+    .safe-note {
+      margin-top: 22px;
+      text-align: center;
+      font-size: 19px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.18);
+    }
+
+    /* — Caption layer — */
+    #caption-layer {
+      position: fixed;
+      bottom: 140px;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      text-align: center;
+      padding: 0 60px;
+      pointer-events: none;
+    }
+
+    .caption-group {
+      display: inline;
+      font-size: 46px;
+      font-weight: 700;
+      line-height: 1.3;
+      background: rgba(0,0,0,0.72);
+      border-radius: 12px;
+      padding: 8px 18px;
+      color: rgba(255,255,255,0.78);
+    }
+
+    .caption-word { white-space: pre; }
+  </style>
+</head>
+<body>
+  <div id="flash-overlay"></div>
+
+  <main
+    id="comp-1"
+    class="stage"
+    data-composition-id="post-match-proof"
+    data-start="0"
+    data-duration="20"
+    data-width="1080"
+    data-height="1920"
+    aria-label="TrueOddsML post-match proof reel"
+  >
+    <section class="content">
+
+      <div class="eyebrow" aria-label="Post-match audit">
+        <span class="eyebrow-dot"></span>
+        TrueOddsML &middot; PROOF AUDIT
+      </div>
+      <span class="match-label" id="match-label">MI vs PBKS</span>
+
+      <h1 class="hook" id="hook" aria-label="Hook">
+        Here is the audit, not&nbsp;the&nbsp;hype.
+      </h1>
+
+      <div class="separator" id="sep-1"></div>
+
+      <!-- THE CALL -->
+      <div class="section-label" id="call-label">The Call</div>
+      <div class="call-card" id="call-card">
+        <div class="call-team-badge" id="call-team-badge">MI</div>
+        <div class="call-meta">
+          <div class="call-meta-label">Model Pick</div>
+          <div class="call-team-name" id="call-team-name">Mumbai Indians</div>
+        </div>
+        <div class="call-prob-chip">
+          <div class="call-prob-value" id="call-prob-value">52%</div>
+          <div class="call-prob-sub">Pre-Match</div>
+        </div>
+      </div>
+
+      <div class="separator" id="sep-2"></div>
+
+      <!-- THE RESULT -->
+      <div class="section-label" id="result-label-heading">The Result</div>
+      <div class="result-panel" id="result-panel">
+        <div class="result-winner-label">Winner</div>
+        <div class="result-winner-name" id="result-winner-name">Punjab Kings</div>
+        <div class="result-badge" id="result-badge">
+          <span class="result-badge-dot"></span>
+          <span id="result-badge-text">TIGHT READ</span>
+        </div>
+      </div>
+
+      <!-- Audit note -->
+      <div class="audit-note" id="audit-note" aria-label="Audit note">
+        The model did not call this a safe mismatch. The result still stayed close to the original 52-48 framing.
+      </div>
+
+      <div class="watermark">TrueOddsML &middot; Probability First</div>
+
+      <div class="cta" id="cta" role="banner">
+        <span class="cta-main" id="cta-main">JOIN TELEGRAM</span>
+        <span class="cta-sub" id="cta-sub">Join Telegram before toss for full match reads.</span>
+      </div>
+
+      <p class="safe-note" id="safe-note">TrueOddsML &middot; Probability-first cricket analysis.</p>
+
+    </section>
+  </main>
+
+  <audio id="voiceover" data-start="0" data-track-index="3" src="assets/voiceover.wav" data-volume="1"></audio>
+  <div id="caption-layer" aria-hidden="true"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    const fallbackData = {
+      template: "post_match_proof",
+      match: "MI vs PBKS",
+      model_pick: "Mumbai Indians",
+      public_team: "Punjab Kings",
+      probability: 52,
+      hook_variants: ["Here is the audit, not the hype."],
+      cta_text: "Join Telegram before toss for full match reads.",
+      proof: {
+        winner: "Punjab Kings",
+        result_label: "tight_read",
+        audit_note: "The model did not call this a safe mismatch. The result still stayed close to the original 52-48 framing."
+      }
+    };
+
+    const RESULT_CONFIG = {
+      hit:        { color: "#00c9a7", label: "HIT ✓",       border: "rgba(0,201,167,0.44)",  bg: "rgba(0,201,167,0.08)"  },
+      tight_read: { color: "#f5c518", label: "TIGHT READ ~", border: "rgba(245,197,24,0.44)", bg: "rgba(245,197,24,0.06)" },
+      miss:       { color: "#ff4c4c", label: "MISS ✗",       border: "rgba(255,76,76,0.44)",  bg: "rgba(255,76,76,0.06)"  }
+    };
+
+    function clamp(v, a, b) { return Math.min(Math.max(Number(v) || 0, a), b); }
+    function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+    function toInitials(name) { return String(name || "").split(/\s+/).map(w => w[0] || "").join("").toUpperCase() || "?"; }
+
+    function applyData(raw) {
+      const d = { ...fallbackData, ...raw };
+      const proof = { ...fallbackData.proof, ...(d.proof || {}) };
+      const prob = clamp(d.probability, 0, 100);
+      const hook = Array.isArray(d.hook_variants) && d.hook_variants[0]
+        ? d.hook_variants[0] : fallbackData.hook_variants[0];
+      const resultKey = proof.result_label || "tight_read";
+      const cfg = RESULT_CONFIG[resultKey] || RESULT_CONFIG.tight_read;
+
+      setText("match-label",       d.match || fallbackData.match);
+      setText("hook",              hook);
+      setText("call-team-badge",   toInitials(d.model_pick) || "MI");
+      setText("call-team-name",    d.model_pick || fallbackData.model_pick);
+      setText("call-prob-value",   `${prob}%`);
+      setText("result-winner-name", proof.winner || "—");
+      setText("result-badge-text", cfg.label);
+      setText("audit-note",        proof.audit_note || fallbackData.proof.audit_note);
+      setText("cta-main",          "JOIN TELEGRAM");
+      setText("cta-sub",           d.cta_text || fallbackData.cta_text);
+
+      // Color result panel by outcome
+      const panel = document.getElementById("result-panel");
+      if (panel) {
+        panel.style.borderColor = cfg.border;
+        panel.style.background  = `linear-gradient(145deg, ${cfg.bg}, rgba(23,24,42,0.92))`;
+      }
+      const winnerName = document.getElementById("result-winner-name");
+      if (winnerName) winnerName.style.color = cfg.color;
+
+      const badge = document.getElementById("result-badge");
+      if (badge) {
+        badge.style.color       = cfg.color;
+        badge.style.borderColor = cfg.border;
+        badge.style.background  = cfg.bg;
+      }
+    }
+
+    async function loadData() {
+      if (window.__MATCH_PREDICTION__) { applyData(window.__MATCH_PREDICTION__); return; }
+      try {
+        const res = await fetch("../inputs/packs/mumbai-indians-vs-punjab-kings/post_match_proof_english.json", { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        applyData(await res.json());
+      } catch (err) {
+        console.warn("Using fallback data:", err.message);
+        applyData(fallbackData);
+      }
+    }
+
+    loadData();
+
+    // ── GSAP seek-driven timeline ─────────────────────────────────────────────
+    function buildTimeline() {
+      if (!window.gsap) {
+        return { pause() { return this; }, seek() { return this; }, time() { return 0; }, duration() { return 20; } };
+      }
+
+      const tl = gsap.timeline({ paused: true });
+
+      // Initial states — must be set before any tween so seeking is deterministic
+      gsap.set("#flash-overlay",        { opacity: 0 });
+      gsap.set(".eyebrow",              { autoAlpha: 0, y: -22, scale: 0.88 });
+      gsap.set(".match-label",          { autoAlpha: 0, y: -12 });
+      gsap.set("#hook",                 { autoAlpha: 0, y: 38 });
+      gsap.set("#sep-1",                { autoAlpha: 0, scaleX: 0, transformOrigin: "left center" });
+      gsap.set("#call-label",           { autoAlpha: 0, x: -40 });
+      gsap.set("#call-card",            { autoAlpha: 0, y: 36, scale: 0.95 });
+      gsap.set("#sep-2",                { autoAlpha: 0, scaleX: 0, transformOrigin: "left center" });
+      gsap.set("#result-label-heading", { autoAlpha: 0, x: -40 });
+      gsap.set("#result-panel",         { autoAlpha: 0, y: 40, scale: 0.95 });
+      gsap.set("#result-badge",         { autoAlpha: 0, scale: 0.7 });
+      gsap.set("#audit-note",           { autoAlpha: 0, y: 28 });
+      gsap.set(".watermark",            { autoAlpha: 0 });
+      gsap.set("#cta",                  { autoAlpha: 0, y: 46, scale: 0.93 });
+      gsap.set("#safe-note",            { autoAlpha: 0 });
+
+      // t=0.05 — Yellow flash
+      tl.to("#flash-overlay", { opacity: 1, duration: 0.04, ease: "none" },        0.05);
+      tl.to("#flash-overlay", { opacity: 0, duration: 0.26, ease: "power2.out" },  0.09);
+
+      // t=0.10 — Eyebrow pops in
+      tl.to(".eyebrow",    { autoAlpha: 1, y: 0, scale: 1, duration: 0.32, ease: "back.out(2.2)" }, 0.10);
+      tl.to(".match-label",{ autoAlpha: 1, y: 0, duration: 0.28, ease: "power2.out" },              0.24);
+
+      // t=1.0 — Hook slides up
+      tl.to("#hook", { autoAlpha: 1, y: 0, duration: 0.42, ease: "power3.out" }, 1.00);
+
+      // t=3.0 — Separator 1
+      tl.to("#sep-1", { autoAlpha: 1, scaleX: 1, duration: 0.44, ease: "power3.out" }, 3.00);
+
+      // t=3.5 — THE CALL label
+      tl.to("#call-label", { autoAlpha: 1, x: 0, duration: 0.32, ease: "power2.out" }, 3.50);
+
+      // t=4.0 — Call card slides up
+      tl.to("#call-card", { autoAlpha: 1, y: 0, scale: 1, duration: 0.48, ease: "back.out(1.6)" }, 4.00);
+
+      // t=7.0 — Separator 2
+      tl.to("#sep-2", { autoAlpha: 1, scaleX: 1, duration: 0.44, ease: "power3.out" }, 7.00);
+
+      // t=7.5 — THE RESULT label
+      tl.to("#result-label-heading", { autoAlpha: 1, x: 0, duration: 0.32, ease: "power2.out" }, 7.50);
+
+      // t=8.0 — Result panel slams up
+      tl.to("#result-panel", { autoAlpha: 1, y: 0, scale: 1, duration: 0.52, ease: "back.out(1.8)" }, 8.00);
+
+      // t=9.0 — Badge pops
+      tl.to("#result-badge", { autoAlpha: 1, scale: 1, duration: 0.38, ease: "back.out(2.4)" }, 9.00);
+
+      // t=10.5 — Audit note fades up
+      tl.to("#audit-note", { autoAlpha: 1, y: 0, duration: 0.48, ease: "power2.out" }, 10.50);
+
+      // t=13.5 — Watermark
+      tl.to(".watermark", { autoAlpha: 1, duration: 0.32 }, 13.50);
+
+      // t=14.0 — CTA slams up
+      tl.to("#cta", { autoAlpha: 1, y: 0, scale: 1, duration: 0.56, ease: "back.out(1.8)" }, 14.00);
+
+      // t=14.8 — Safe note
+      tl.to("#safe-note", { autoAlpha: 1, duration: 0.30 }, 14.80);
+
+      // t=17.2 — CTA pulse 1
+      tl.to("#cta", { scale: 1.022, duration: 0.36, ease: "sine.inOut", yoyo: true, repeat: 1 }, 17.20);
+
+      // t=19.2 — CTA pulse 2
+      tl.to("#cta", { scale: 1.026, duration: 0.30, ease: "sine.inOut", yoyo: true, repeat: 1 }, 19.20);
+
+      // ── Karaoke captions ──────────────────────────────────────────────────────
+      CAPTION_GROUPS.forEach(function(group, gi) {
+        const groupEl = document.getElementById("cg-" + gi);
+        if (!groupEl) return;
+        tl.set(groupEl,  { opacity: 0, visibility: "hidden" }, Math.max(0, group.start - 0.01));
+        tl.set(groupEl,  { visibility: "visible" },            group.start);
+        tl.to(groupEl,   { opacity: 1, duration: 0.12, ease: "power1.out" }, group.start);
+        group.words.forEach(function(word, wi) {
+          const wordId   = "#cw-" + gi + "-" + wi;
+          const nextStart = group.words[wi + 1] ? group.words[wi + 1].start : word.end;
+          tl.to(wordId, { color: "#f5c518", scale: 1.08, duration: 0.05, ease: "power1.out" }, word.start);
+          tl.to(wordId, { color: "rgba(255,255,255,0.78)", scale: 1, duration: 0.10, ease: "power1.in" }, nextStart);
+        });
+        tl.to(groupEl,  { opacity: 0, scale: 0.96, duration: 0.12, ease: "power2.in" }, group.end - 0.12);
+        tl.set(groupEl, { opacity: 0, visibility: "hidden" }, group.end);
+      });
+
+      return tl;
+    }
+
+    // ── Caption layer ──────────────────────────────────────────────────────────
+    const TRANSCRIPT     = window.__TRANSCRIPT__ || [];
+    let   CAPTION_GROUPS = [];
+
+    function groupWords(words, maxPerGroup) {
+      const groups = [];
+      let   current = [];
+      for (let i = 0; i < words.length; i++) {
+        current.push(words[i]);
+        const atMax   = current.length >= maxPerGroup;
+        const atPunct = /[.!?,;]$/.test(words[i].text.trim()) && current.length >= 3;
+        const isLast  = i === words.length - 1;
+        if (atMax || atPunct || isLast) {
+          groups.push({ words: current.slice(), start: current[0].start, end: current[current.length - 1].end });
+          current = [];
+        }
+      }
+      return groups;
+    }
+
+    function buildCaptionLayer() {
+      if (!TRANSCRIPT.length) return;
+      CAPTION_GROUPS = groupWords(TRANSCRIPT, 5);
+      const layer = document.getElementById("caption-layer");
+      CAPTION_GROUPS.forEach(function(group, gi) {
+        const groupEl = document.createElement("div");
+        groupEl.id        = "cg-" + gi;
+        groupEl.className = "caption-group";
+        group.words.forEach(function(word, wi) {
+          const span = document.createElement("span");
+          span.id          = "cw-" + gi + "-" + wi;
+          span.className   = "caption-word";
+          span.textContent = (wi > 0 ? " " : "") + word.text;
+          groupEl.appendChild(span);
+        });
+        if (window.__hyperframes && window.__hyperframes.fitTextFontSize) {
+          const text = group.words.map(w => w.text).join(" ");
+          const fit  = window.__hyperframes.fitTextFontSize(text, { fontFamily: "Inter", fontWeight: 700, maxWidth: 920, baseFontSize: 50, minFontSize: 30 });
+          groupEl.style.fontSize = fit.fontSize + "px";
+        }
+        layer.appendChild(groupEl);
+      });
+    }
+
+    window.__timelines = window.__timelines || {};
+    buildCaptionLayer();
+    window.__timelines["post-match-proof"] = buildTimeline();
+  </script>
+</body>
+</html>

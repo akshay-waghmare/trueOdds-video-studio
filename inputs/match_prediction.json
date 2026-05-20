@@ -1,13 +1,13 @@
 {
   "template": "prematch_prediction",
-  "match": "Punjab Kings vs Mumbai Indians",
-  "public_team": "Punjab Kings",
-  "model_pick": "Punjab Kings",
-  "probability": 52,
+  "match": "LSG vs RR",
+  "public_team": "RR",
+  "model_pick": "LSG",
+  "probability": 57,
   "reasons": [
-    "Toss: Mumbai Indians chose to bowl",
-    "Punjab Kings stayed 52 percent favourite",
-    "No major move after toss context update"
+    "RR lost 4 of last 5 matches.",
+    "Jaipur: 64% matches won bowling first.",
+    "LSG: 2 wins from last 5 vs RR's 1 win."
   ],
-  "cta": "Join Telegram for full picks before toss."
+  "cta": "Don't guess the match. Read the probability. Follow TrueOddsML."
 }

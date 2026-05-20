@@ -19,6 +19,14 @@
       --red: #ff4c4c;
       --text: #ffffff;
       --muted: #a0a8b8;
+
+      /* Team-specific colors — overridden by JS after data loads */
+      --pub-color: #ff4c4c;
+      --pub-rgb: 255, 76, 76;
+      --mdl-color: #f5c518;
+      --mdl-color-light: #ffe278;
+      --mdl-rgb: 245, 197, 24;
+      --mdl-text: #111112;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -49,8 +57,8 @@
       padding: 72px 74px 76px;
       overflow: hidden;
       background:
-        radial-gradient(circle at 72% 18%, rgba(245, 197, 24, 0.18), transparent 28%),
-        radial-gradient(circle at 12% 78%, rgba(0, 201, 167, 0.14), transparent 30%),
+        radial-gradient(circle at 72% 18%, rgba(var(--pub-rgb), 0.14), transparent 28%),
+        radial-gradient(circle at 12% 78%, rgba(var(--mdl-rgb), 0.12), transparent 30%),
         linear-gradient(160deg, #08080d 0%, #0d1020 55%, #09090f 100%);
     }
 
@@ -185,17 +193,17 @@
       text-transform: uppercase;
     }
 
-    .public { border-color: rgba(255,76,76,0.28); }
-    .public .team-badge { box-shadow: inset 0 -10px 50px rgba(255,76,76,0.2); }
-    .public .pick-accent { color: var(--red); }
+    .public { border-color: rgba(var(--pub-rgb), 0.28); }
+    .public .team-badge { box-shadow: inset 0 -10px 50px rgba(var(--pub-rgb), 0.2); }
+    .public .pick-accent { color: var(--pub-color); }
 
-    .model { border-color: rgba(245,197,24,0.32); box-shadow: 0 0 44px rgba(245,197,24,0.1); }
+    .model { border-color: rgba(var(--mdl-rgb), 0.32); box-shadow: 0 0 44px rgba(var(--mdl-rgb), 0.1); }
     .model .team-badge {
-      color: #111112;
-      background: linear-gradient(135deg, #ffe278, var(--yellow));
-      box-shadow: 0 0 60px rgba(245,197,24,0.38);
+      color: var(--mdl-text);
+      background: linear-gradient(135deg, var(--mdl-color-light), var(--mdl-color));
+      box-shadow: 0 0 60px rgba(var(--mdl-rgb), 0.38);
     }
-    .model .pick-accent { color: var(--yellow); }
+    .model .pick-accent { color: var(--mdl-color); }
 
     .vs-badge {
       display: grid;
@@ -603,6 +611,36 @@
       SRH:  "assets/logo/sunrisers_hyderabad.png",
     };
 
+    /* Per-team brand colors — hex, r/g/b for rgba(), light shade, badge text */
+    const TEAM_COLORS = {
+      MI:   { hex: "#1B72C4", rgb: "27, 114, 196",   light: "#4DA3F7", text: "#ffffff" },
+      KKR:  { hex: "#7B2FBE", rgb: "123, 47, 190",   light: "#AA6EF0", text: "#ffffff" },
+      RCB:  { hex: "#D91E1E", rgb: "217, 30, 30",    light: "#FF5B5B", text: "#ffffff" },
+      CSK:  { hex: "#F9CD05", rgb: "249, 205, 5",    light: "#FFE44D", text: "#111112" },
+      SRH:  { hex: "#F26522", rgb: "242, 101, 34",   light: "#FF9A5C", text: "#ffffff" },
+      DC:   { hex: "#1E7FD6", rgb: "30, 127, 214",   light: "#5AB2FF", text: "#ffffff" },
+      PBKS: { hex: "#C82A3B", rgb: "200, 42, 59",    light: "#FF6070", text: "#ffffff" },
+      RR:   { hex: "#E91E8C", rgb: "233, 30, 140",   light: "#FF6DC0", text: "#ffffff" },
+      GT:   { hex: "#1C9ED4", rgb: "28, 158, 212",   light: "#5DCEF5", text: "#ffffff" },
+      LSG:  { hex: "#00C9A7", rgb: "0, 201, 167",    light: "#5DEDD4", text: "#0a0a0f" },
+    };
+
+    function setTeamColors(publicTeam, modelTeam) {
+      const r = document.documentElement;
+      const pub = TEAM_COLORS[publicTeam];
+      const mdl = TEAM_COLORS[modelTeam];
+      if (pub) {
+        r.style.setProperty("--pub-color", pub.hex);
+        r.style.setProperty("--pub-rgb",   pub.rgb);
+      }
+      if (mdl) {
+        r.style.setProperty("--mdl-color",       mdl.hex);
+        r.style.setProperty("--mdl-color-light",  mdl.light);
+        r.style.setProperty("--mdl-rgb",          mdl.rgb);
+        r.style.setProperty("--mdl-text",         mdl.text);
+      }
+    }
+
     const clamp = (v, a, b) => Math.min(Math.max(Number(v) || 0, a), b);
 
     function setText(id, value) {
@@ -671,6 +709,8 @@
           cards[i].style.display = "none";
         }
       }
+
+      setTeamColors(publicTeam, modelPick);
     }
 
     async function loadPrediction() {

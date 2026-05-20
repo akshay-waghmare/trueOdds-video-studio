@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1080, height=1920, initial-scale=1">
+  <title>TrueOddsML - Turning Point</title>
+  <style>
+    :root {
+      --bg:     #0a0a0f;
+      --border: #1e2235;
+      --yellow: #f5c518;
+      --teal:   #00c9a7;
+      --red:    #ff4c4c;
+      --text:   #ffffff;
+      --muted:  #a0a8b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 1080px;
+      height: 1920px;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, Poppins, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    #flash-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(245, 197, 24, 0.88);
+      pointer-events: none;
+    }
+
+    .stage {
+      position: relative;
+      width: 1080px;
+      height: 1920px;
+      padding: 72px 74px 76px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 82% 14%, rgba(245, 197, 24, 0.16), transparent 28%),
+        radial-gradient(circle at 15% 80%, rgba(255, 76, 76, 0.10), transparent 30%),
+        linear-gradient(160deg, #08080d 0%, #0d0f1a 55%, #09090f 100%);
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.12;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 72px 72px;
+      transform: rotate(-8deg) scale(1.15);
+    }
+
+    .stage::after {
+      content: "";
+      position: absolute;
+      inset: 34px;
+      border: 1px solid rgba(245, 197, 24, 0.15);
+      border-radius: 44px;
+      pointer-events: none;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* — Eyebrow — */
+    .eyebrow {
+      display: inline-flex;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 22px;
+      border: 1px solid rgba(245, 197, 24, 0.28);
+      border-radius: 999px;
+      color: var(--yellow);
+      background: rgba(245, 197, 24, 0.08);
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow-dot {
+      width: 9px;
+      height: 9px;
+      background: var(--yellow);
+      border-radius: 50%;
+      animation: blink 1.4s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.15; }
+    }
+
+    .match-label {
+      display: block;
+      margin-top: 14px;
+      color: rgba(255,255,255,0.5);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* — Hook — */
+    .hook {
+      margin-top: 36px;
+      font-size: 56px;
+      font-weight: 900;
+      line-height: 1.10;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    /* — Snapshot label (score moment) — */
+    .snapshot-label {
+      margin-top: 32px;
+      font-size: 50px;
+      font-weight: 950;
+      letter-spacing: -0.02em;
+      color: var(--yellow);
+      line-height: 1.05;
+    }
+
+    .snapshot-sub {
+      margin-top: 6px;
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* — Probability swing panel — */
+    .swing-panel {
+      margin-top: 32px;
+      padding: 28px 32px 24px;
+      border-radius: 26px;
+      border: 1px solid var(--border);
+      background: linear-gradient(145deg, rgba(18,18,30,0.96), rgba(23,24,42,0.92));
+      box-shadow: 0 24px 72px rgba(0,0,0,0.36);
+    }
+
+    .swing-panel-title {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .bar-row:last-of-type { margin-bottom: 0; }
+
+    .bar-row-label {
+      width: 80px;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.07);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 8px;
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+
+    .bar-fill.before { background: linear-gradient(90deg, #00c9a7, #00a88a); }
+    .bar-fill.after  { background: linear-gradient(90deg, #f5c518, #c9a414); }
+
+    .bar-value {
+      width: 70px;
+      text-align: right;
+      font-size: 28px;
+      font-weight: 950;
+      letter-spacing: -0.02em;
+      flex-shrink: 0;
+    }
+
+    .bar-value.before { color: var(--teal); }
+    .bar-value.after  { color: var(--yellow); }
+
+    /* — Delta badge — */
+    .delta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+      padding: 10px 24px;
+      border-radius: 999px;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+    }
+
+    /* — Signals list — */
+    .signals-list {
+      margin-top: 32px;
+    }
+
+    .signal-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      padding: 18px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.35;
+      color: rgba(255,255,255,0.88);
+    }
+
+    .signal-item:last-child { border-bottom: none; }
+
+    .signal-icon {
+      font-size: 26px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* — Lesson card — */
+    .lesson-card {
+      margin-top: 32px;
+      padding: 26px 30px;
+      border-radius: 22px;
+      background: rgba(245,197,24,0.06);
+      border-left: 3px solid rgba(245,197,24,0.38);
+    }
+
+    .lesson-label {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      margin-bottom: 10px;
+    }
+
+    .lesson-text {
+      font-size: 27px;
+      font-weight: 600;
+      font-style: italic;
+      line-height: 1.5;
+      color: rgba(255,255,255,0.80);
+    }
+
+    /* — Watermark — */
+    .watermark {
+      margin-top: 32px;
+      text-align: center;
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.20);
+    }
+
+    /* — CTA — */
+    .cta {
+      margin-top: 24px;
+      padding: 30px 40px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(245,197,24,0.16), rgba(245,197,24,0.05));
+      border: 1px solid rgba(245,197,24,0.36);
+      text-align: center;
+    }
+
+    .cta-main {
+      display: block;
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--yellow);
+    }
+
+    .cta-sub {
+      display: block;
+      margin-top: 8px;
+      font-size: 22px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.70);
+    }
+
+    .safe-note {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 19px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.18);
+    }
+
+    /* — Caption layer — */
+    #caption-layer {
+      position: fixed;
+      bottom: 140px;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      text-align: center;
+      padding: 0 60px;
+      pointer-events: none;
+    }
+
+    .caption-group {
+      display: inline;
+      font-size: 46px;
+      font-weight: 700;
+      line-height: 1.3;
+      background: rgba(0,0,0,0.72);
+      border-radius: 12px;
+      padding: 8px 18px;
+      color: rgba(255,255,255,0.78);
+    }
+
+    .caption-word { white-space: pre; }
+  </style>
+</head>
+<body>
+  <div id="flash-overlay"></div>
+
+  <main
+    id="comp-1"
+    class="stage"
+    data-composition-id="turning-point"
+    data-start="0"
+    data-duration="20"
+    data-width="1080"
+    data-height="1920"
+    aria-label="TrueOddsML turning point analysis reel"
+  >
+    <section class="content">
+
+      <div class="eyebrow" aria-label="Turning point">
+        <span class="eyebrow-dot"></span>
+        TrueOddsML &middot; TURNING POINT
+      </div>
+      <span class="match-label" id="match-label">MI vs PBKS</span>
+
+      <h1 class="hook" id="hook">
+        This was the real turning point.
+      </h1>
+
+      <!-- Snapshot label -->
+      <div class="snapshot-label" id="snapshot-label">82/1 AFTER 9 OVERS</div>
+      <div class="snapshot-sub" id="snapshot-sub">The moment pressure became visible</div>
+
+      <!-- Probability swing panel -->
+      <div class="swing-panel" id="swing-panel">
+        <div class="swing-panel-title">Probability Swing</div>
+
+        <div class="bar-row">
+          <div class="bar-row-label">Before</div>
+          <div class="bar-track">
+            <div class="bar-fill before" id="bar-before"></div>
+          </div>
+          <div class="bar-value before" id="bar-before-val">62%</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-row-label">After</div>
+          <div class="bar-track">
+            <div class="bar-fill after" id="bar-after"></div>
+          </div>
+          <div class="bar-value after" id="bar-after-val">48%</div>
+        </div>
+
+        <div class="delta-badge" id="delta-badge">▼ 14 POINTS</div>
+      </div>
+
+      <!-- Signals — populated by JS (1–4 items) -->
+      <div class="signals-list" id="signals-list">
+        <div class="signal-item" id="signal-0">
+          <span class="signal-icon">⚡</span>
+          <span id="signal-0-text">Required rate started climbing</span>
+        </div>
+        <div class="signal-item" id="signal-1">
+          <span class="signal-icon">⚡</span>
+          <span id="signal-1-text">Dot-ball pressure was building</span>
+        </div>
+        <div class="signal-item" id="signal-2">
+          <span class="signal-icon">⚡</span>
+          <span id="signal-2-text">The venue was not easing the chase</span>
+        </div>
+        <div class="signal-item" id="signal-3" style="display:none">
+          <span class="signal-icon">⚡</span>
+          <span id="signal-3-text"></span>
+        </div>
+      </div>
+
+      <!-- Lesson card -->
+      <div class="lesson-card" id="lesson-card">
+        <div class="lesson-label">💡 Lesson</div>
+        <div class="lesson-text" id="lesson-text">
+          The collapse was not sudden. The pressure was visible before the wicket.
+        </div>
+      </div>
+
+      <div class="watermark">TrueOddsML &middot; Probability First</div>
+
+      <div class="cta" id="cta" role="banner">
+        <span class="cta-main" id="cta-main">JOIN TELEGRAM</span>
+        <span class="cta-sub" id="cta-sub">Join Telegram before toss for full match reads.</span>
+      </div>
+
+      <p class="safe-note" id="safe-note">TrueOddsML &middot; Probability-first cricket analysis.</p>
+
+    </section>
+  </main>
+
+  <audio id="voiceover" data-start="0" data-track-index="3" src="assets/voiceover.wav" data-volume="1"></audio>
+  <div id="caption-layer" aria-hidden="true"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    const fallbackData = {
+      template: "turning_point",
+      match: "MI vs PBKS",
+      model_pick: "Mumbai Indians",
+      probability: 52,
+      hook_variants: ["This was the real turning point."],
+      cta_text: "Join Telegram before toss for full match reads.",
+      snapshot: {
+        snapshot_label: "82/1 after 9 overs",
+        score: "82/1 after 9.0 overs",
+        probability_before: 62,
+        probability_after: 48,
+        signals: [
+          "Required rate started climbing",
+          "Dot-ball pressure was building",
+          "The venue was not easing the chase"
+        ],
+        lesson: "The collapse was not sudden. The pressure was visible before the wicket."
+      }
+    };
+
+    function clamp(v, a, b) { return Math.min(Math.max(Number(v) || 0, a), b); }
+    function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+
+    // Store for timeline access
+    let _snapBefore = 62;
+    let _snapAfter  = 48;
+    let _signalCount = 3;
+
+    function applyData(raw) {
+      const d    = { ...fallbackData, ...raw };
+      const snap = { ...fallbackData.snapshot, ...(d.snapshot || {}) };
+      const hook = Array.isArray(d.hook_variants) && d.hook_variants[0]
+        ? d.hook_variants[0] : fallbackData.hook_variants[0];
+
+      _snapBefore  = clamp(snap.probability_before, 0, 100);
+      _snapAfter   = clamp(snap.probability_after,  0, 100);
+      const delta  = _snapAfter - _snapBefore;
+      const absDelta = Math.abs(delta);
+
+      setText("match-label",     d.match || fallbackData.match);
+      setText("hook",            hook);
+      setText("snapshot-label",  (snap.snapshot_label || snap.score || "").toUpperCase());
+      setText("snapshot-sub",    snap.score && snap.score !== snap.snapshot_label
+        ? snap.score : "The moment pressure became visible");
+      setText("bar-before-val",  `${_snapBefore}%`);
+      setText("bar-after-val",   `${_snapAfter}%`);
+
+      // Delta badge
+      const deltaBadge = document.getElementById("delta-badge");
+      if (deltaBadge) {
+        if (delta < 0) {
+          deltaBadge.textContent  = `▼ ${absDelta} POINTS`;
+          deltaBadge.style.color  = "#ff4c4c";
+          deltaBadge.style.border = "1px solid rgba(255,76,76,0.40)";
+          deltaBadge.style.background = "rgba(255,76,76,0.08)";
+        } else if (delta > 0) {
+          deltaBadge.textContent  = `▲ ${absDelta} POINTS`;
+          deltaBadge.style.color  = "#00c9a7";
+          deltaBadge.style.border = "1px solid rgba(0,201,167,0.40)";
+          deltaBadge.style.background = "rgba(0,201,167,0.08)";
+        } else {
+          deltaBadge.textContent  = "NO MOVE";
+          deltaBadge.style.color  = "#a0a8b8";
+          deltaBadge.style.border = "1px solid rgba(160,168,184,0.30)";
+          deltaBadge.style.background = "rgba(160,168,184,0.06)";
+        }
+      }
+
+      // Signals (1–4)
+      const signals = Array.isArray(snap.signals) ? snap.signals : fallbackData.snapshot.signals;
+      _signalCount  = Math.min(signals.length, 4);
+      for (let i = 0; i < 4; i++) {
+        const item = document.getElementById("signal-" + i);
+        const text = document.getElementById("signal-" + i + "-text");
+        if (i < _signalCount) {
+          if (item)  item.style.display = "flex";
+          if (text)  text.textContent   = signals[i];
+        } else {
+          if (item)  item.style.display = "none";
+        }
+      }
+
+      setText("lesson-text", snap.lesson || fallbackData.snapshot.lesson);
+      setText("cta-main",    "JOIN TELEGRAM");
+      setText("cta-sub",     d.cta_text || fallbackData.cta_text);
+    }
+
+    async function loadData() {
+      if (window.__MATCH_PREDICTION__) { applyData(window.__MATCH_PREDICTION__); return; }
+      try {
+        const res = await fetch("../inputs/packs/mumbai-indians-vs-punjab-kings/turning_point_english.json", { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        applyData(await res.json());
+      } catch (err) {
+        console.warn("Using fallback data:", err.message);
+        applyData(fallbackData);
+      }
+    }
+
+    loadData();
+
+    // ── GSAP seek-driven timeline ─────────────────────────────────────────────
+    function buildTimeline() {
+      if (!window.gsap) {
+        return { pause() { return this; }, seek() { return this; }, time() { return 0; }, duration() { return 20; } };
+      }
+
+      const tl = gsap.timeline({ paused: true });
+
+      // Initial states — explicit sets before any tween for deterministic seeking
+      gsap.set("#flash-overlay",  { opacity: 0 });
+      gsap.set(".eyebrow",        { autoAlpha: 0, y: -22, scale: 0.88 });
+      gsap.set(".match-label",    { autoAlpha: 0, y: -12 });
+      gsap.set("#hook",           { autoAlpha: 0, y: 38 });
+      gsap.set("#snapshot-label", { autoAlpha: 0, y: 28 });
+      gsap.set("#snapshot-sub",   { autoAlpha: 0 });
+      gsap.set("#swing-panel",    { autoAlpha: 0, y: 36, scale: 0.95 });
+      gsap.set("#bar-before",     { scaleX: 0 });
+      gsap.set("#bar-after",      { scaleX: 0 });
+      gsap.set("#delta-badge",    { autoAlpha: 0, scale: 0.6 });
+      // Hide all signals initially
+      for (let i = 0; i < 4; i++) {
+        gsap.set("#signal-" + i, { autoAlpha: 0, x: -60 });
+      }
+      gsap.set("#lesson-card",    { autoAlpha: 0, y: 28 });
+      gsap.set(".watermark",      { autoAlpha: 0 });
+      gsap.set("#cta",            { autoAlpha: 0, y: 46, scale: 0.93 });
+      gsap.set("#safe-note",      { autoAlpha: 0 });
+
+      // t=0.05 — Yellow flash
+      tl.to("#flash-overlay", { opacity: 1, duration: 0.04, ease: "none" },       0.05);
+      tl.to("#flash-overlay", { opacity: 0, duration: 0.26, ease: "power2.out" }, 0.09);
+
+      // t=0.10 — Eyebrow + match label
+      tl.to(".eyebrow",    { autoAlpha: 1, y: 0, scale: 1, duration: 0.32, ease: "back.out(2.2)" }, 0.10);
+      tl.to(".match-label",{ autoAlpha: 1, y: 0, duration: 0.28, ease: "power2.out" },              0.24);
+
+      // t=1.0 — Hook
+      tl.to("#hook", { autoAlpha: 1, y: 0, duration: 0.42, ease: "power3.out" }, 1.00);
+
+      // t=2.5 — Snapshot label punches in
+      tl.to("#snapshot-label", { autoAlpha: 1, y: 0, duration: 0.44, ease: "back.out(1.8)" }, 2.50);
+      tl.to("#snapshot-sub",   { autoAlpha: 1, duration: 0.28, ease: "power2.out" },          2.96);
+
+      // t=3.5 — Swing panel slides up
+      tl.to("#swing-panel", { autoAlpha: 1, y: 0, scale: 1, duration: 0.48, ease: "back.out(1.5)" }, 3.50);
+
+      // t=3.9 — BEFORE bar animates with onUpdate proxy (seek-safe)
+      const beforeProxy = { val: 0 };
+      tl.fromTo(beforeProxy, { val: 0 }, {
+        val: _snapBefore,
+        duration: 1.2,
+        ease: "power2.inOut",
+        onUpdate() {
+          const bar = document.getElementById("bar-before");
+          if (bar) bar.style.transform = `scaleX(${beforeProxy.val / 100})`;
+          const lbl = document.getElementById("bar-before-val");
+          if (lbl) lbl.textContent = `${Math.round(beforeProxy.val)}%`;
+        }
+      }, 3.90);
+
+      // t=4.5 — AFTER bar animates (slight delay for visual rhythm)
+      const afterProxy = { val: 0 };
+      tl.fromTo(afterProxy, { val: 0 }, {
+        val: _snapAfter,
+        duration: 1.0,
+        ease: "power2.inOut",
+        onUpdate() {
+          const bar = document.getElementById("bar-after");
+          if (bar) bar.style.transform = `scaleX(${afterProxy.val / 100})`;
+          const lbl = document.getElementById("bar-after-val");
+          if (lbl) lbl.textContent = `${Math.round(afterProxy.val)}%`;
+        }
+      }, 4.50);
+
+      // t=5.5 — Delta badge pops
+      tl.to("#delta-badge", { autoAlpha: 1, scale: 1, duration: 0.38, ease: "back.out(2.4)" }, 5.50);
+
+      // t=7.0–11.0 — Signals stagger in (up to 4, each ~1.5s apart, only active ones)
+      const signalTimes = [7.00, 8.80, 10.60, 12.40];
+      for (let i = 0; i < 4; i++) {
+        tl.to("#signal-" + i, {
+          autoAlpha: 1,
+          x: 0,
+          duration: 0.44,
+          ease: "back.out(1.8)"
+        }, signalTimes[i]);
+      }
+
+      // t=13.0 — Lesson card
+      tl.to("#lesson-card", { autoAlpha: 1, y: 0, duration: 0.48, ease: "power2.out" }, 13.00);
+
+      // t=14.5 — Watermark
+      tl.to(".watermark", { autoAlpha: 1, duration: 0.32 }, 14.50);
+
+      // t=15.0 — CTA
+      tl.to("#cta", { autoAlpha: 1, y: 0, scale: 1, duration: 0.56, ease: "back.out(1.8)" }, 15.00);
+
+      // t=15.8 — Safe note
+      tl.to("#safe-note", { autoAlpha: 1, duration: 0.30 }, 15.80);
+
+      // t=17.2 — CTA pulse 1
+      tl.to("#cta", { scale: 1.022, duration: 0.36, ease: "sine.inOut", yoyo: true, repeat: 1 }, 17.20);
+
+      // t=19.2 — CTA pulse 2
+      tl.to("#cta", { scale: 1.026, duration: 0.30, ease: "sine.inOut", yoyo: true, repeat: 1 }, 19.20);
+
+      // ── Karaoke captions ──────────────────────────────────────────────────────
+      CAPTION_GROUPS.forEach(function(group, gi) {
+        const groupEl = document.getElementById("cg-" + gi);
+        if (!groupEl) return;
+        tl.set(groupEl,  { opacity: 0, visibility: "hidden" }, Math.max(0, group.start - 0.01));
+        tl.set(groupEl,  { visibility: "visible" },            group.start);
+        tl.to(groupEl,   { opacity: 1, duration: 0.12, ease: "power1.out" }, group.start);
+        group.words.forEach(function(word, wi) {
+          const wordId    = "#cw-" + gi + "-" + wi;
+          const nextStart = group.words[wi + 1] ? group.words[wi + 1].start : word.end;
+          tl.to(wordId, { color: "#f5c518", scale: 1.08, duration: 0.05, ease: "power1.out" }, word.start);
+          tl.to(wordId, { color: "rgba(255,255,255,0.78)", scale: 1, duration: 0.10, ease: "power1.in" }, nextStart);
+        });
+        tl.to(groupEl,  { opacity: 0, scale: 0.96, duration: 0.12, ease: "power2.in" }, group.end - 0.12);
+        tl.set(groupEl, { opacity: 0, visibility: "hidden" }, group.end);
+      });
+
+      return tl;
+    }
+
+    // ── Caption layer ──────────────────────────────────────────────────────────
+    const TRANSCRIPT     = window.__TRANSCRIPT__ || [];
+    let   CAPTION_GROUPS = [];
+
+    function groupWords(words, maxPerGroup) {
+      const groups = [];
+      let   current = [];
+      for (let i = 0; i < words.length; i++) {
+        current.push(words[i]);
+        const atMax   = current.length >= maxPerGroup;
+        const atPunct = /[.!?,;]$/.test(words[i].text.trim()) && current.length >= 3;
+        const isLast  = i === words.length - 1;
+        if (atMax || atPunct || isLast) {
+          groups.push({ words: current.slice(), start: current[0].start, end: current[current.length - 1].end });
+          current = [];
+        }
+      }
+      return groups;
+    }
+
+    function buildCaptionLayer() {
+      if (!TRANSCRIPT.length) return;
+      CAPTION_GROUPS = groupWords(TRANSCRIPT, 5);
+      const layer = document.getElementById("caption-layer");
+      CAPTION_GROUPS.forEach(function(group, gi) {
+        const groupEl = document.createElement("div");
+        groupEl.id        = "cg-" + gi;
+        groupEl.className = "caption-group";
+        group.words.forEach(function(word, wi) {
+          const span = document.createElement("span");
+          span.id          = "cw-" + gi + "-" + wi;
+          span.className   = "caption-word";
+          span.textContent = (wi > 0 ? " " : "") + word.text;
+          groupEl.appendChild(span);
+        });
+        if (window.__hyperframes && window.__hyperframes.fitTextFontSize) {
+          const text = group.words.map(w => w.text).join(" ");
+          const fit  = window.__hyperframes.fitTextFontSize(text, { fontFamily: "Inter", fontWeight: 700, maxWidth: 920, baseFontSize: 50, minFontSize: 30 });
+          groupEl.style.fontSize = fit.fontSize + "px";
+        }
+        layer.appendChild(groupEl);
+      });
+    }
+
+    window.__timelines = window.__timelines || {};
+    buildCaptionLayer();
+    window.__timelines["turning-point"] = buildTimeline();
+  </script>
+</body>
+</html>

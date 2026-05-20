@@ -244,10 +244,11 @@ The probability has already been computed mathematically from real Cricsheet dat
 1. Identify the PUBLIC TEAM — the team that casual fans, media, and bookmakers overrate.
    Usually: bigger brand (MI, CSK, RCB, KKR), recent IPL fame, or star-power hype.
 2. Confirm MODEL PICK — the team the data supports (given as computed_probability for team1).
-3. Write exactly 3 reasons for the model pick. Max 8 words each. Must cite ACTUAL NUMBERS
-   from the statistics provided (wins, games, percentages, streaks). NEVER write generic
-   phrases like "strong batting lineup" or "star players". Every reason must reference a
-   specific stat from the data above.
+3. Write exactly 3 reasons for the model pick. MAX 6 WORDS EACH — these are read aloud
+   by a TTS voice; shorter reasons sound cleaner and punch harder. Must cite ACTUAL NUMBERS
+   from the statistics provided (wins, games, percentages). NEVER write generic phrases
+   like "strong batting lineup" or "star players". Every reason must reference a specific
+   stat from the data above. Example of good format: "RR leads H2H five to three."
 4. Write one explanation sentence summarising the statistical edge.
 
 Respond with ONLY valid JSON, no markdown:

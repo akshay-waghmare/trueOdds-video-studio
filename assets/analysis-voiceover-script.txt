@@ -1,0 +1,9 @@
+Still guessing cricket? Stop. Your emotions are not a strategy.
+
+Right now the crowd is picking Rajasthan. Home ground. Favourite team. Pure emotion. No data.
+
+TrueOddsML model picks Lucknow. fifty-seven percent win probability. Rajasthan lost 4 of last 5 matches. Jaipur: 64% matches won bowling first. Lucknow: 2 wins from last 5 versus Rajasthan's 1 win.
+
+Powered by Machine Learning and Monte Carlo simulation. We run thousands of IPL match scenarios — team form, venue history, head to head. Cutting edge cricket science.
+
+Don't guess the match. Read the probability. Follow TrueOddsML.

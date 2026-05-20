@@ -41,39 +41,58 @@ function normalizeTeamName(value) {
   return String(value || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
 }
 
-// ── Build ~38-word narration script ─────────────────────────────────────────
+// ── Build narration script aligned to video beat timeline ───────────────────
+//
+// Video beat timeline:
+//   t=0–5s   hook   — hook lines (public vs model) animate on screen
+//   t=5–9s   prob   — probability panel + counter animates
+//   t=9–15s  reasons— reason cards 1, 2, 3 slide in
+//   t=15s+   cta    — CTA card appears
+//
+// Script is split into 4 paragraphs with \n\n between each.
+// The TTS engine inserts a natural ~0.5s pause at each paragraph break,
+// which paces the narration to match the video's scene timing.
+//
+// Speed 0.85x gives ~2.2 words/second — slow enough to sound natural,
+// fast enough to stay within the 20–25s composition window.
+//
+// Rough word budget per beat at 0.85x:
+//   hook   (~5s):  8–10 words
+//   prob   (~4s):  6–7 words (says the model pick + probability number)
+//   reasons(~6s):  12–15 words (3 short reasons, period-separated)
+//   cta    (~2s):  4–6 words
 function buildScript(p) {
-  const match = p.match
+  const TEAM_RE   = /\b(MI|KKR|RCB|CSK|SRH|DC|PBKS|RR|GT|LSG)\b/g;
+  const match     = p.match
     .replace(/\bvs\b/ig, 'versus')
-    .replace(/\b(MI|KKR|RCB|CSK|SRH|DC|PBKS|RR|GT|LSG)\b/g, m => TEAM_NAMES[m] || m);
-  const probWords   = numToWords(p.probability);
-  const publicTeam  = teamName(p.public_team);
-  const modelPick   = teamName(p.model_pick);
-  const sameFavorite = normalizeTeamName(publicTeam) === normalizeTeamName(modelPick);
-  // Apply team name substitution to reasons text too
-  const TEAM_RE     = /\b(MI|KKR|RCB|CSK|SRH|DC|PBKS|RR|GT|LSG)\b/g;
-  const reasonsText = p.reasons.map(r => r.trim().replace(TEAM_RE, m => TEAM_NAMES[m] || m)).join('. ');
-  // Use last 2 sentences of CTA to stay within 20s budget
-  const ctaSentences = p.cta.split('.').map(s => s.trim()).filter(Boolean);
-  const ctaLine     = ctaSentences.slice(-2).join('. ') + '.';
+    .replace(TEAM_RE, m => TEAM_NAMES[m] || m);
+  const probWords = numToWords(p.probability);
+  const pub       = teamName(p.public_team);
+  const pick      = teamName(p.model_pick);
+  const sameFav   = normalizeTeamName(pub) === normalizeTeamName(pick);
+  const reasons   = p.reasons.map(r =>
+    r.trim()
+     .replace(TEAM_RE, m => TEAM_NAMES[m] || m)
+     .replace(/\bH2H\b/gi, 'head to head')  // TTS reads "H2H" as letters, not words
+     .replace(/[.!?]+$/, '')                 // strip trailing punctuation — re-added when joining
+  );
+  const ctaSents  = p.cta.split('.').map(s => s.trim()).filter(Boolean);
+  const cta       = ctaSents.slice(-2).join('. ') + '.';
 
-  if (sameFavorite) {
+  if (sameFav) {
     return [
-      `Toss update: ${match}.`,
-      `${modelPick} was favourite before the toss, and stays favourite now.`,
-      `TrueOddsML has ${modelPick} at ${probWords} percent.`,
-      `${reasonsText}.`,
-      ctaLine
+      /* beat 1 – hook */    `${match}. ${pick} is the clear market favourite.`,
+      /* beat 2 – prob  */   `TrueOddsML agrees. ${probWords} percent win probability.`,
+      /* beat 3 – reasons */ reasons.join('. ') + '.',
+      /* beat 4 – cta   */   cta,
     ].join('\n\n');
   }
 
-  // Target: ~40 words → ~18-19s at 1.05x speed
   return [
-    `The public is backing ${publicTeam}. Our model disagrees.`,
-    `${match}. Market makes ${publicTeam} the favourite.`,
-    `TrueOddsML picks ${modelPick}. ${probWords} percent probability.`,
-    `${reasonsText}.`,
-    ctaLine
+    /* beat 1 – hook */    `The public is backing ${pub}. Our model disagrees.`,
+    /* beat 2 – prob  */   `TrueOddsML picks ${pick}. ${probWords} percent probability.`,
+    /* beat 3 – reasons */ reasons.join('. ') + '.',
+    /* beat 4 – cta   */   cta,
   ].join('\n\n');
 }
 
@@ -102,8 +121,8 @@ console.log('--- Script ---');
 console.log(script);
 console.log('--------------');
 
-// Generate TTS audio
-run('hyperframes', ['tts', scriptPath, '-o', audioPath, '-v', 'bm_george', '-s', '1.05']);
+// Generate TTS audio at 0.85x speed — natural pacing, clear inter-sentence pauses
+run('hyperframes', ['tts', scriptPath, '-o', audioPath, '-v', 'bm_george', '-s', '0.85']);
 console.log(`Audio generated: ${audioPath}`);
 
 // Get audio duration via ffprobe (already required for the render pipeline)
@@ -119,26 +138,50 @@ function getAudioDuration(filePath) {
   return d;
 }
 
-// Build a synthetic word-level transcript from the known script text.
-// TTS output is metrically consistent so proportional distribution is reliable.
-// Longer words get proportionally more time; 3% end-padding for trailing silence.
-function syntheticTranscript(scriptText, durationSeconds) {
-  const tokens = scriptText
-    .replace(/\n+/g, ' ')
-    .split(/\s+/)
-    .filter(w => w.length > 0);
+// Paragraph-aware synthetic transcript.
+//
+// Problem with the old character-proportional approach: it distributed ALL words
+// evenly over the total audio duration, ignoring the ~0.5s silence the TTS engine
+// inserts between paragraph breaks (\n\n). This caused captions to appear *before*
+// the corresponding word was actually spoken (because the pauses shift real timing).
+//
+// Fix: detect paragraph boundaries, insert a 0.50s gap between them in the
+// transcript, then distribute each paragraph's words proportionally *within*
+// that paragraph's speech window only.
+const PARA_PAUSE_SECS = 0.50;  // seconds TTS inserts at each \n\n boundary
 
-  const activeDuration = durationSeconds * 0.97;
-  const totalChars = tokens.reduce((s, w) => s + w.replace(/[^a-z]/gi, '').length || 1, 0);
+function syntheticTranscript(scriptText, durationSeconds) {
+  const paragraphs = scriptText.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
+  const pauseTotal = (paragraphs.length - 1) * PARA_PAUSE_SECS;
+  const trailSilence = durationSeconds * 0.03; // 3% trailing fade
+  const speechTime = Math.max(durationSeconds - pauseTotal - trailSilence, 1);
+
+  // Total char count (letters only) across every word — used for proportional weighting
+  const allTokens = paragraphs.flatMap(p => p.split(/\s+/).filter(w => w.length > 0));
+  const totalChars = allTokens.reduce((s, w) => s + (w.replace(/[^a-z]/gi, '').length || 1), 0);
 
   let cursor = 0;
-  return tokens.map(token => {
-    const charLen = token.replace(/[^a-z]/gi, '').length || 1;
-    const dur = (charLen / totalChars) * activeDuration;
-    const word = { text: token.replace(/[.,!?;:]+$/, ''), start: +cursor.toFixed(3), end: +(cursor + dur).toFixed(3) };
-    cursor += dur;
-    return word;
-  });
+  const words = [];
+
+  for (let pi = 0; pi < paragraphs.length; pi++) {
+    const tokens = paragraphs[pi].split(/\s+/).filter(w => w.length > 0);
+    for (const token of tokens) {
+      const charLen = token.replace(/[^a-z]/gi, '').length || 1;
+      const dur = (charLen / totalChars) * speechTime;
+      words.push({
+        text: token.replace(/[.,!?;:]+$/, ''),
+        start: +cursor.toFixed(3),
+        end:   +(cursor + dur).toFixed(3),
+      });
+      cursor += dur;
+    }
+    // Advance cursor by the paragraph pause (skip after last paragraph)
+    if (pi < paragraphs.length - 1) {
+      cursor += PARA_PAUSE_SECS;
+    }
+  }
+
+  return words;
 }
 
 const duration = getAudioDuration(audioPath);
