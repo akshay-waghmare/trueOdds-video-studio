@@ -1,0 +1,946 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1080, height=1920, initial-scale=1">
+  <title>TrueOddsML — Powerplay Signal</title>
+  <style>
+    :root {
+      --bg:     #0a0a0f;
+      --surface:#12121e;
+      --border: #1e2235;
+      --yellow: #f5c518;
+      --teal:   #00c9a7;
+      --red:    #ff4c4c;
+      --text:   #ffffff;
+      --muted:  #a0a8b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 1080px; height: 1920px;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, Poppins, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .scene {
+      position: absolute; top: 0; left: 0;
+      width: 1080px; height: 1920px;
+      overflow: hidden;
+    }
+
+    /* Subtle grid overlay */
+    .scene::before {
+      content: "";
+      position: absolute; inset: 0;
+      opacity: 0.07;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 72px 72px;
+      pointer-events: none;
+    }
+
+    /* Gold frame border */
+    .scene::after {
+      content: "";
+      position: absolute; inset: 32px;
+      border: 1px solid rgba(245,197,24,0.10);
+      border-radius: 40px;
+      pointer-events: none;
+    }
+
+    /* ── Scene backgrounds ── */
+    #s1 {
+      z-index: 1;
+      background:
+        radial-gradient(circle at 78% 12%, rgba(245,197,24,0.24) 0%, transparent 38%),
+        radial-gradient(circle at 18% 82%, rgba(0,201,167,0.08) 0%, transparent 32%),
+        linear-gradient(165deg, #080810 0%, #0d0f1a 55%, #090910 100%);
+    }
+
+    #s2 {
+      z-index: 2; opacity: 0;
+      background:
+        radial-gradient(circle at 50% 28%, rgba(0,201,167,0.14) 0%, transparent 40%),
+        linear-gradient(165deg, #08080d 0%, #0d0f1a 55%, #09090f 100%);
+    }
+
+    #s3 {
+      z-index: 3; opacity: 0;
+      background:
+        radial-gradient(circle at 72% 22%, rgba(245,197,24,0.28) 0%, transparent 42%),
+        radial-gradient(circle at 22% 72%, rgba(245,197,24,0.06) 0%, transparent 32%),
+        linear-gradient(165deg, #080810 0%, #0e1020 55%, #090910 100%);
+    }
+
+    #s4 {
+      z-index: 4; opacity: 0;
+      background:
+        radial-gradient(circle at 28% 18%, rgba(255,76,76,0.12) 0%, transparent 40%),
+        linear-gradient(165deg, #08080d 0%, #0d0f1a 55%, #09090f 100%);
+    }
+
+    #s5 {
+      z-index: 5; opacity: 0;
+      background:
+        radial-gradient(circle at 55% 35%, rgba(0,201,167,0.14) 0%, transparent 40%),
+        linear-gradient(165deg, #08080d 0%, #0d0f1a 55%, #09090f 100%);
+    }
+
+    #s6 {
+      z-index: 6; opacity: 0;
+      background:
+        radial-gradient(circle at 50% 48%, rgba(245,197,24,0.16) 0%, transparent 50%),
+        linear-gradient(165deg, #080810 0%, #0e1020 55%, #090910 100%);
+    }
+
+    /* ── Content wrapper (fills scene, padding insets content) ── */
+    .sc {
+      position: relative; z-index: 2;
+      width: 100%; height: 100%;
+      padding: 80px 74px 60px;
+      display: flex; flex-direction: column;
+    }
+
+    /* ── Shared components ── */
+    .eyebrow-pill {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 10px 20px; border-radius: 999px;
+      font-size: 21px; font-weight: 800;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      width: fit-content;
+    }
+    .eyebrow-pill.teal   { color: var(--teal);   background: rgba(0,201,167,0.08);  border: 1px solid rgba(0,201,167,0.28); }
+    .eyebrow-pill.yellow { color: var(--yellow); background: rgba(245,197,24,0.08); border: 1px solid rgba(245,197,24,0.28); }
+    .eyebrow-pill.red    { color: var(--red);    background: rgba(255,76,76,0.08);  border: 1px solid rgba(255,76,76,0.28); }
+
+    .eyebrow-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: currentColor; flex-shrink: 0;
+    }
+
+    .rule-h {
+      width: 100%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(245,197,24,0.50), transparent);
+      transform-origin: left center;
+    }
+
+    .data-card {
+      padding: 28px 32px; border-radius: 24px;
+      background: linear-gradient(145deg, rgba(18,18,30,0.96), rgba(23,24,42,0.92));
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 56px rgba(0,0,0,0.36);
+    }
+
+    /* ══════════════════ SCENE 1 — HOOK ══════════════════ */
+    #s1-ghost {
+      position: absolute; bottom: 60px; right: -30px;
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 400px; font-weight: 900; line-height: 1;
+      color: rgba(245,197,24,0.04);
+      letter-spacing: 0.02em;
+      pointer-events: none; user-select: none;
+    }
+
+    #s1-match {
+      margin-top: 22px;
+      font-size: 30px; font-weight: 700;
+      letter-spacing: 0.10em; color: var(--muted); text-transform: uppercase;
+    }
+
+    #s1-yesterday {
+      margin-top: 26px;
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 160px; font-weight: 900; line-height: 0.88;
+      letter-spacing: 0.02em; color: var(--yellow);
+      text-shadow: 0 0 80px rgba(245,197,24,0.50);
+    }
+
+    #s1-chasing-line {
+      margin-top: 16px;
+      font-size: 36px; font-weight: 700;
+      letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase;
+    }
+
+    #s1-target-row {
+      margin-top: 6px;
+      display: flex; align-items: baseline; gap: 16px;
+    }
+
+    #s1-target {
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 140px; font-weight: 900; line-height: 0.88;
+      letter-spacing: 0.04em; color: var(--text);
+    }
+
+    #s1-target-unit {
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 58px; font-weight: 900;
+      letter-spacing: 0.06em; color: var(--teal);
+    }
+
+    #s1-rule { margin-top: 34px; }
+
+    #s1-hook-text {
+      margin-top: 28px;
+      font-size: 44px; font-weight: 800; line-height: 1.30;
+      color: rgba(255,255,255,0.84);
+    }
+
+    #s1-hook-text em { color: var(--yellow); font-style: normal; }
+
+    /* ══════════════════ SCENE 2 — SCORE DATA ══════════════════ */
+    #s2-ghost-score {
+      position: absolute; top: 220px; left: -20px;
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 380px; font-weight: 900; line-height: 0.82;
+      color: rgba(0,201,167,0.05);
+      pointer-events: none; user-select: none;
+    }
+
+    #s2-over-label {
+      margin-top: 24px;
+      font-size: 26px; font-weight: 700;
+      letter-spacing: 0.10em; color: var(--muted); text-transform: uppercase;
+    }
+
+    #s2-score {
+      margin-top: 10px;
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 220px; font-weight: 900; line-height: 0.86;
+      letter-spacing: 0.02em; color: var(--teal);
+    }
+
+    #s2-score-label {
+      margin-top: 4px;
+      font-size: 30px; font-weight: 900;
+      letter-spacing: 0.12em; color: var(--text); text-transform: uppercase;
+    }
+
+    #s2-stats-card { margin-top: 28px; }
+
+    .stat-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .stat-row:last-child { border-bottom: none; }
+
+    .stat-label {
+      font-size: 23px; font-weight: 700;
+      letter-spacing: 0.10em; color: var(--muted); text-transform: uppercase;
+    }
+
+    .stat-value {
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 46px; font-weight: 900;
+      letter-spacing: 0.04em; color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-value.red    { color: var(--red); }
+    .stat-value.yellow { color: var(--yellow); }
+
+    #s2-quote {
+      margin-top: 24px;
+      padding: 20px 26px; border-radius: 18px;
+      background: rgba(255,76,76,0.06);
+      border-left: 3px solid rgba(255,76,76,0.35);
+    }
+
+    #s2-quote-text {
+      font-size: 28px; font-weight: 600; font-style: italic;
+      line-height: 1.50; color: rgba(255,255,255,0.62);
+    }
+
+    /* ══════════════════ SCENE 3 — THE CALL ══════════════════ */
+    #s3-sub {
+      margin-top: 20px;
+      font-size: 26px; font-weight: 700;
+      letter-spacing: 0.10em; color: var(--muted); text-transform: uppercase;
+    }
+
+    #s3-call-header {
+      margin-top: 10px;
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 160px; font-weight: 900; line-height: 0.86;
+      letter-spacing: 0.04em; color: var(--text);
+    }
+
+    #s3-compare {
+      margin-top: 32px;
+      display: flex; gap: 18px; align-items: stretch;
+    }
+
+    .compare-box {
+      flex: 1; padding: 26px 20px 22px;
+      border-radius: 22px; text-align: center;
+    }
+
+    .compare-box.public {
+      background: rgba(160,168,184,0.06);
+      border: 1px solid rgba(160,168,184,0.18);
+    }
+
+    .compare-box.model {
+      background: rgba(245,197,24,0.08);
+      border: 1px solid rgba(245,197,24,0.38);
+      box-shadow: 0 0 64px rgba(245,197,24,0.12);
+    }
+
+    .compare-label {
+      font-size: 22px; font-weight: 900;
+      letter-spacing: 0.18em; text-transform: uppercase;
+    }
+
+    .compare-box.public .compare-label { color: var(--muted); }
+    .compare-box.model  .compare-label { color: var(--yellow); }
+
+    .compare-pct {
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-weight: 900; line-height: 0.86; margin-top: 10px;
+    }
+
+    .compare-box.public .compare-pct { font-size: 110px; color: rgba(160,168,184,0.55); }
+    .compare-box.model  .compare-pct { font-size: 140px; color: var(--yellow); text-shadow: 0 0 40px rgba(245,197,24,0.55); }
+
+    .compare-sub {
+      margin-top: 8px; font-size: 18px; font-weight: 700;
+      letter-spacing: 0.10em; text-transform: uppercase;
+    }
+
+    .compare-box.public .compare-sub { color: rgba(160,168,184,0.42); }
+    .compare-box.model  .compare-sub { color: rgba(245,197,24,0.56); }
+
+    #s3-delta {
+      margin-top: 22px;
+      display: flex; align-items: center; justify-content: center; gap: 14px;
+      padding: 16px 32px; border-radius: 999px;
+      background: rgba(0,201,167,0.10); border: 1px solid rgba(0,201,167,0.36);
+      font-size: 30px; font-weight: 900;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal);
+    }
+
+    #s3-insight {
+      margin-top: 24px;
+      padding: 20px 26px; border-radius: 18px;
+      background: rgba(245,197,24,0.06);
+      border-left: 3px solid rgba(245,197,24,0.35);
+    }
+
+    #s3-insight-text {
+      font-size: 29px; font-weight: 700; line-height: 1.50;
+      color: rgba(255,255,255,0.82);
+    }
+
+    #s3-insight-text strong { color: var(--yellow); }
+
+    /* ══════════════════ SCENE 4 — WHY ══════════════════ */
+    #s4-why-label {
+      margin-top: 22px;
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 100px; font-weight: 900; line-height: 0.88;
+      letter-spacing: 0.04em; color: var(--text);
+    }
+
+    #s4-wickets {
+      margin-top: 18px;
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 180px; font-weight: 900; line-height: 0.86;
+      letter-spacing: 0.02em; color: var(--teal);
+    }
+
+    #s4-wickets-label {
+      margin-top: 4px;
+      font-size: 32px; font-weight: 800;
+      letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase;
+    }
+
+    #s4-rule { margin-top: 26px; }
+
+    #s4-proof {
+      margin-top: 26px;
+      padding: 26px 30px; border-radius: 22px;
+      background: rgba(255,76,76,0.06); border: 1px solid rgba(255,76,76,0.20);
+    }
+
+    #s4-proof-label {
+      font-size: 20px; font-weight: 900;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--red); margin-bottom: 12px;
+    }
+
+    #s4-proof-text {
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 72px; font-weight: 900; line-height: 1.0; color: var(--text);
+    }
+
+    #s4-proof-sub {
+      margin-top: 10px;
+      font-size: 25px; font-weight: 600; line-height: 1.45;
+      color: rgba(255,255,255,0.62);
+    }
+
+    #s4-lesson {
+      margin-top: 24px;
+      padding: 20px 26px; border-radius: 18px;
+      background: rgba(245,197,24,0.06);
+      border-left: 3px solid rgba(245,197,24,0.35);
+    }
+
+    #s4-lesson-text {
+      font-size: 28px; font-weight: 600; font-style: italic;
+      line-height: 1.50; color: rgba(255,255,255,0.80);
+    }
+
+    /* ══════════════════ SCENE 5 — PROBABILITY TRACK ══════════════════ */
+    #s5-header {
+      margin-top: 22px;
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 88px; font-weight: 900; line-height: 0.90;
+      letter-spacing: 0.04em; color: var(--text);
+    }
+
+    #s5-header span { color: var(--teal); }
+
+    #s5-bars { margin-top: 32px; display: flex; flex-direction: column; gap: 26px; }
+
+    .track-row { display: flex; flex-direction: column; gap: 8px; }
+
+    .track-meta {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .track-over {
+      font-size: 26px; font-weight: 900;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+    }
+
+    .track-score {
+      font-size: 22px; font-weight: 700;
+      color: rgba(255,255,255,0.50);
+    }
+
+    .track-bar-row {
+      display: flex; align-items: center; gap: 14px;
+    }
+
+    .track-bar-wrap {
+      flex: 1; position: relative;
+      height: 54px; border-radius: 10px;
+      background: rgba(255,255,255,0.07); overflow: hidden;
+    }
+
+    .track-bar {
+      position: absolute; top: 0; left: 0;
+      height: 100%; border-radius: 10px;
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+
+    .track-bar.over6  { background: linear-gradient(90deg, #00c9a7, #00a88a); }
+    .track-bar.over11 { background: linear-gradient(90deg, #f5c518, #c9a414); }
+    .track-bar.over12 { background: linear-gradient(90deg, #f5c518, #ffde60); }
+
+    .track-pct-label {
+      width: 80px; text-align: right;
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 44px; font-weight: 900; line-height: 1;
+      letter-spacing: 0.02em; flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .track-pct-label.teal   { color: var(--teal); }
+    .track-pct-label.yellow { color: var(--yellow); }
+
+    #s5-insight {
+      margin-top: 28px;
+      padding: 20px 26px; border-radius: 18px;
+      background: rgba(0,201,167,0.06);
+      border-left: 3px solid rgba(0,201,167,0.35);
+    }
+
+    #s5-insight-text {
+      font-size: 27px; font-weight: 600; line-height: 1.50;
+      color: rgba(255,255,255,0.78);
+    }
+
+    #s5-insight-text strong { color: var(--teal); }
+
+    /* ══════════════════ SCENE 6 — RESULT + CTA ══════════════════ */
+    #s6-won {
+      margin-top: 26px;
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 240px; font-weight: 900; line-height: 0.82;
+      letter-spacing: 0.02em; color: var(--yellow);
+      text-shadow: 0 0 100px rgba(245,197,24,0.60);
+    }
+
+    #s6-won-team {
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 100px; font-weight: 900; line-height: 0.88;
+      letter-spacing: 0.04em; color: var(--text);
+    }
+
+    #s6-called {
+      margin-top: 20px;
+      font-size: 32px; font-weight: 700;
+      letter-spacing: 0.06em; color: var(--muted);
+    }
+
+    #s6-rule { margin-top: 28px; }
+
+    #s6-phil-line1 {
+      margin-top: 26px;
+      font-size: 38px; font-weight: 700; line-height: 1.30;
+      color: rgba(255,255,255,0.58);
+    }
+
+    #s6-phil-line2 {
+      margin-top: 6px;
+      font-size: 42px; font-weight: 900; line-height: 1.30;
+      color: var(--text);
+    }
+
+    #s6-phil-line2 em { color: var(--yellow); font-style: normal; }
+
+    #s6-cta {
+      margin-top: 34px;
+      padding: 30px 38px; border-radius: 26px;
+      background: linear-gradient(135deg, rgba(245,197,24,0.16), rgba(245,197,24,0.05));
+      border: 1px solid rgba(245,197,24,0.38);
+    }
+
+    #s6-cta-main {
+      display: block;
+      font-size: 34px; font-weight: 900;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--yellow);
+    }
+
+    #s6-cta-sub {
+      display: block; margin-top: 8px;
+      font-size: 24px; font-weight: 600;
+      color: rgba(255,255,255,0.65);
+    }
+
+    #s6-watermark {
+      margin-top: 22px;
+      font-size: 20px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(255,255,255,0.18);
+    }
+  </style>
+</head>
+<body>
+  <div
+    id="comp"
+    data-composition-id="powerplay-signal"
+    data-start="0"
+    data-duration="20"
+    data-width="1080"
+    data-height="1920"
+  >
+
+    <!-- ══════════════════ SCENE 1 — HOOK ══════════════════ -->
+    <div id="s1" class="scene">
+      <div id="s1-ghost">RR</div>
+      <div class="sc">
+        <div id="s1-eyebrow" class="eyebrow-pill teal">
+          <span class="eyebrow-dot"></span>
+          LIVE MATCH RECORD &middot; MAY 19
+        </div>
+        <div id="s1-match">LSG vs RR &nbsp;&middot;&nbsp; IPL 2026</div>
+        <div id="s1-yesterday">YESTERDAY</div>
+        <div id="s1-chasing-line">RR was chasing</div>
+        <div id="s1-target-row">
+          <span id="s1-target">221</span>
+          <span id="s1-target-unit">RUNS</span>
+        </div>
+        <div id="s1-rule" class="rule-h"></div>
+        <div id="s1-hook-text">Our model saw something the crowd <em>missed.</em></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ SCENE 2 — SCORE DATA ══════════════════ -->
+    <div id="s2" class="scene">
+      <div id="s2-ghost-score">71/0</div>
+      <div class="sc">
+        <div id="s2-eyebrow" class="eyebrow-pill yellow">
+          <span class="eyebrow-dot"></span>
+          POWERPLAY DONE &nbsp;&middot;&nbsp; OVER 6.0
+        </div>
+        <div id="s2-over-label">Rajasthan Royals — innings 2</div>
+        <div id="s2-score">71/0</div>
+        <div id="s2-score-label">RUNS &nbsp;&middot;&nbsp; NO WICKETS LOST</div>
+        <div id="s2-stats-card" class="data-card">
+          <div class="stat-row">
+            <div class="stat-label">Target</div>
+            <div class="stat-value">221</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">Still Needed</div>
+            <div class="stat-value red">150</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">Balls Left</div>
+            <div class="stat-value yellow">84</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">Required Rate</div>
+            <div class="stat-value red">10.7</div>
+          </div>
+        </div>
+        <div id="s2-quote">
+          <div id="s2-quote-text">"Too far behind. That required rate is impossible from here."</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ SCENE 3 — THE CALL ══════════════════ -->
+    <div id="s3" class="scene">
+      <div class="sc">
+        <div id="s3-eyebrow" class="eyebrow-pill yellow">
+          <span class="eyebrow-dot"></span>
+          THE MODEL CALL &nbsp;&middot;&nbsp; OVER 6
+        </div>
+        <div id="s3-sub">Real-time probability — both sides</div>
+        <div id="s3-call-header">THE CALL</div>
+        <div id="s3-compare">
+          <div class="compare-box public" id="s3-public">
+            <div class="compare-label">Public</div>
+            <div class="compare-pct">~35%</div>
+            <div class="compare-sub">estimate</div>
+          </div>
+          <div class="compare-box model" id="s3-model">
+            <div class="compare-label">Model</div>
+            <div class="compare-pct">72%</div>
+            <div class="compare-sub">RR win prob</div>
+          </div>
+        </div>
+        <div id="s3-delta">
+          <span>&#8593;</span> 37 POINT EDGE
+        </div>
+        <div id="s3-insight">
+          <div id="s3-insight-text">
+            <strong>0 wickets at powerplay end.</strong> 10 resources intact.
+            The score looked hard. The model read resources.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ SCENE 4 — WHY ══════════════════ -->
+    <div id="s4" class="scene">
+      <div class="sc">
+        <div id="s4-eyebrow" class="eyebrow-pill red">
+          <span class="eyebrow-dot"></span>
+          WHY 72%? &nbsp;&middot;&nbsp; THE SIGNAL
+        </div>
+        <div id="s4-why-label">WICKETS IN HAND</div>
+        <div id="s4-wickets">10</div>
+        <div id="s4-wickets-label">Wickets still to fall &nbsp;&middot;&nbsp; 84 balls remaining</div>
+        <div id="s4-rule" class="rule-h"></div>
+        <div id="s4-proof">
+          <div id="s4-proof-label">&#9888; Live Proof &mdash; Over 7</div>
+          <div id="s4-proof-text">72% &#8594; 44%</div>
+          <div id="s4-proof-sub">RR lost their first wicket. One ball. Model dropped 28 points instantly. The score barely changed. The wicket did it.</div>
+        </div>
+        <div id="s4-lesson">
+          <div id="s4-lesson-text">Wickets are resources. Resources are probability. Score is just the surface.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ SCENE 5 — PROBABILITY TRACK ══════════════════ -->
+    <div id="s5" class="scene">
+      <div class="sc">
+        <div id="s5-eyebrow" class="eyebrow-pill teal">
+          <span class="eyebrow-dot"></span>
+          PROBABILITY TRACK &nbsp;&middot;&nbsp; REAL DATA
+        </div>
+        <div id="s5-header">RR WIN PROB<br><span>OVER BY OVER</span></div>
+        <div id="s5-bars">
+
+          <div class="track-row" id="s5-row6">
+            <div class="track-meta">
+              <div class="track-over">Over 6</div>
+              <div class="track-score">71/0 &nbsp;&middot;&nbsp; RRR 10.7</div>
+            </div>
+            <div class="track-bar-row">
+              <div class="track-bar-wrap">
+                <div class="track-bar over6" id="bar6"></div>
+              </div>
+              <div class="track-pct-label teal" id="pct6">72%</div>
+            </div>
+          </div>
+
+          <div class="track-row" id="s5-row11">
+            <div class="track-meta">
+              <div class="track-over">Over 11</div>
+              <div class="track-score">137/1 &nbsp;&middot;&nbsp; 54 balls left</div>
+            </div>
+            <div class="track-bar-row">
+              <div class="track-bar-wrap">
+                <div class="track-bar over11" id="bar11"></div>
+              </div>
+              <div class="track-pct-label yellow" id="pct11">90%</div>
+            </div>
+          </div>
+
+          <div class="track-row" id="s5-row12">
+            <div class="track-meta">
+              <div class="track-over">Over 12</div>
+              <div class="track-score">166/1 &nbsp;&middot;&nbsp; 48 balls left</div>
+            </div>
+            <div class="track-bar-row">
+              <div class="track-bar-wrap">
+                <div class="track-bar over12" id="bar12"></div>
+              </div>
+              <div class="track-pct-label yellow" id="pct12">99%</div>
+            </div>
+          </div>
+
+        </div>
+        <div id="s5-insight">
+          <div id="s5-insight-text">
+            After over 12: <strong>166 scored. 55 needed. 9 wickets. 48 balls.</strong>
+            The model saw what the scoreboard could not.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ SCENE 6 — RESULT + CTA ══════════════════ -->
+    <div id="s6" class="scene">
+      <div class="sc">
+        <div id="s6-eyebrow" class="eyebrow-pill yellow">
+          <span class="eyebrow-dot"></span>
+          RESULT &nbsp;&middot;&nbsp; MAY 19 2026
+        </div>
+        <div id="s6-won">RR</div>
+        <div id="s6-won-team">WON THE MATCH</div>
+        <div id="s6-called">Model called it at over 6 &mdash; 12 overs early.</div>
+        <div id="s6-rule" class="rule-h"></div>
+        <div id="s6-phil-line1">The score is visible.</div>
+        <div id="s6-phil-line2">The probability is <em>hidden.</em></div>
+        <div id="s6-cta">
+          <span id="s6-cta-main">Crickzen TrueOdds</span>
+          <span id="s6-cta-sub">Don't guess the match. Read the probability.</span>
+        </div>
+        <div id="s6-watermark">TrueOddsML &nbsp;&middot;&nbsp; Probability First</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    window.__timelines = window.__timelines || {};
+
+    const tl = gsap.timeline({ paused: true });
+
+    // ── Initial states (deterministic — set before any tween) ───────────────
+
+    // Scene 1
+    gsap.set("#s1-ghost",        { autoAlpha: 0 });
+    gsap.set("#s1-eyebrow",      { autoAlpha: 0, y: -22 });
+    gsap.set("#s1-match",        { autoAlpha: 0, x: -40 });
+    gsap.set("#s1-yesterday",    { autoAlpha: 0, y: 55, scale: 0.88 });
+    gsap.set("#s1-chasing-line", { autoAlpha: 0 });
+    gsap.set("#s1-target-row",   { autoAlpha: 0, y: 36 });
+    gsap.set("#s1-rule",         { scaleX: 0 });
+    gsap.set("#s1-hook-text",    { autoAlpha: 0, y: 28 });
+
+    // Scene 2
+    gsap.set("#s2-ghost-score",  { autoAlpha: 0 });
+    gsap.set("#s2-eyebrow",      { autoAlpha: 0, y: -22 });
+    gsap.set("#s2-over-label",   { autoAlpha: 0 });
+    gsap.set("#s2-score",        { autoAlpha: 0, scale: 0.82 });
+    gsap.set("#s2-score-label",  { autoAlpha: 0 });
+    gsap.set("#s2-stats-card",   { autoAlpha: 0, y: 38, scale: 0.96 });
+    gsap.set("#s2-quote",        { autoAlpha: 0, x: -28 });
+
+    // Scene 3
+    gsap.set("#s3-eyebrow",      { autoAlpha: 0, y: -22 });
+    gsap.set("#s3-sub",          { autoAlpha: 0 });
+    gsap.set("#s3-call-header",  { autoAlpha: 0, y: 32 });
+    gsap.set("#s3-public",       { autoAlpha: 0, x: -38 });
+    gsap.set("#s3-model",        { autoAlpha: 0, x: 38, scale: 0.86 });
+    gsap.set("#s3-delta",        { autoAlpha: 0, scale: 0.68 });
+    gsap.set("#s3-insight",      { autoAlpha: 0, y: 28 });
+
+    // Scene 4
+    gsap.set("#s4-eyebrow",      { autoAlpha: 0, y: -22 });
+    gsap.set("#s4-why-label",    { autoAlpha: 0, x: -48 });
+    gsap.set("#s4-wickets",      { autoAlpha: 0, scale: 0.62 });
+    gsap.set("#s4-wickets-label",{ autoAlpha: 0 });
+    gsap.set("#s4-rule",         { scaleX: 0 });
+    gsap.set("#s4-proof",        { autoAlpha: 0, y: 38 });
+    gsap.set("#s4-lesson",       { autoAlpha: 0, y: 22 });
+
+    // Scene 5
+    gsap.set("#s5-eyebrow",      { autoAlpha: 0, y: -22 });
+    gsap.set("#s5-header",       { autoAlpha: 0, y: 28 });
+    gsap.set("#s5-row6",         { autoAlpha: 0, x: -48 });
+    gsap.set("#s5-row11",        { autoAlpha: 0, x: -48 });
+    gsap.set("#s5-row12",        { autoAlpha: 0, x: -48 });
+    gsap.set("#bar6",            { scaleX: 0 });
+    gsap.set("#bar11",           { scaleX: 0 });
+    gsap.set("#bar12",           { scaleX: 0 });
+    gsap.set("#s5-insight",      { autoAlpha: 0, y: 22 });
+
+    // Scene 6
+    gsap.set("#s6-eyebrow",      { autoAlpha: 0, y: -22 });
+    gsap.set("#s6-won",          { autoAlpha: 0, scale: 0.72 });
+    gsap.set("#s6-won-team",     { autoAlpha: 0, y: 28 });
+    gsap.set("#s6-called",       { autoAlpha: 0 });
+    gsap.set("#s6-rule",         { scaleX: 0 });
+    gsap.set("#s6-phil-line1",   { autoAlpha: 0, y: 20 });
+    gsap.set("#s6-phil-line2",   { autoAlpha: 0, y: 20 });
+    gsap.set("#s6-cta",          { autoAlpha: 0, y: 38, scale: 0.93 });
+    gsap.set("#s6-watermark",    { autoAlpha: 0 });
+
+    // ── SCENE 1 — HOOK (0–2.6s) ────────────────────────────────────────────
+    tl.fromTo("#s1-ghost",        { autoAlpha: 0 },         { autoAlpha: 1, duration: 2.2, ease: "power1.out" },              0.10);
+    tl.fromTo("#s1-eyebrow",      { autoAlpha: 0, y: -22 }, { autoAlpha: 1, y: 0, duration: 0.34, ease: "back.out(2.2)" },   0.18);
+    tl.fromTo("#s1-match",        { autoAlpha: 0, x: -40 }, { autoAlpha: 1, x: 0, duration: 0.30, ease: "power3.out" },      0.34);
+    tl.fromTo("#s1-yesterday",    { autoAlpha: 0, y: 55, scale: 0.88 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.52, ease: "back.out(1.8)" }, 0.58);
+    tl.fromTo("#s1-chasing-line", { autoAlpha: 0 },         { autoAlpha: 1, duration: 0.28, ease: "power2.out" },             1.15);
+    tl.fromTo("#s1-target-row",   { autoAlpha: 0, y: 36 },  { autoAlpha: 1, y: 0, duration: 0.44, ease: "expo.out" },        1.32);
+    tl.fromTo("#s1-rule",         { scaleX: 0 },             { scaleX: 1, duration: 0.52, ease: "power2.inOut" },             1.78);
+    tl.fromTo("#s1-hook-text",    { autoAlpha: 0, y: 28 },  { autoAlpha: 1, y: 0, duration: 0.42, ease: "power2.out" },      2.18);
+
+    // Transition S1 → S2: blur crossfade medium (T=2.6)
+    var T12 = 2.6;
+    tl.to("#s1",   { filter: "blur(15px)", scale: 1.05, opacity: 0, duration: 0.44, ease: "power2.in" },                      T12);
+    tl.fromTo("#s2", { filter: "blur(15px)", scale: 0.95, opacity: 0 }, { filter: "blur(0px)", scale: 1, opacity: 1, duration: 0.44, ease: "power2.out" }, T12 + 0.20);
+    tl.set("#s1",  { visibility: "hidden" }, T12 + 0.50);
+
+    // ── SCENE 2 — SCORE DATA (S2=3.0s) ─────────────────────────────────────
+    var S2 = T12 + 0.40;
+    tl.fromTo("#s2-ghost-score",  { autoAlpha: 0 },           { autoAlpha: 1, duration: 0.62, ease: "power1.out" },            S2 + 0.10);
+    tl.fromTo("#s2-eyebrow",      { autoAlpha: 0, y: -22 },   { autoAlpha: 1, y: 0, duration: 0.32, ease: "back.out(2.0)" },  S2 + 0.16);
+    tl.fromTo("#s2-over-label",   { autoAlpha: 0 },           { autoAlpha: 1, duration: 0.28, ease: "sine.out" },              S2 + 0.34);
+    tl.fromTo("#s2-score",        { autoAlpha: 0, scale: 0.82 }, { autoAlpha: 1, scale: 1, duration: 0.58, ease: "back.out(2.2)" }, S2 + 0.52);
+    tl.fromTo("#s2-score-label",  { autoAlpha: 0 },           { autoAlpha: 1, duration: 0.28, ease: "power1.out" },            S2 + 0.84);
+    tl.fromTo("#s2-stats-card",   { autoAlpha: 0, y: 38, scale: 0.96 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.50, ease: "power3.out" }, S2 + 1.02);
+    tl.fromTo("#s2-quote",        { autoAlpha: 0, x: -28 },  { autoAlpha: 1, x: 0, duration: 0.40, ease: "expo.out" },        S2 + 1.74);
+
+    // Transition S2 → S3: color dip / smash cut for the reveal (T=6.1)
+    var T23 = 6.1;
+    tl.to("#s2",   { opacity: 0, duration: 0.18, ease: "power2.in" },                                                          T23);
+    tl.fromTo("#s3", { opacity: 0 }, { opacity: 1, duration: 0.22, ease: "power2.out", overwrite: "auto" },                                      T23 + 0.18);
+    tl.set("#s2",  { visibility: "hidden" }, T23 + 0.24);
+
+    // ── SCENE 3 — THE CALL (S3≈6.35s) ──────────────────────────────────────
+    var S3 = T23 + 0.26;
+    tl.fromTo("#s3-eyebrow",      { autoAlpha: 0, y: -22 },   { autoAlpha: 1, y: 0, duration: 0.32, ease: "back.out(2.0)" },  S3 + 0.10);
+    tl.fromTo("#s3-sub",          { autoAlpha: 0 },           { autoAlpha: 1, duration: 0.26, ease: "power2.out" },            S3 + 0.28);
+    tl.fromTo("#s3-call-header",  { autoAlpha: 0, y: 32 },   { autoAlpha: 1, y: 0, duration: 0.50, ease: "expo.out" },        S3 + 0.46);
+    tl.fromTo("#s3-public",       { autoAlpha: 0, x: -38 },  { autoAlpha: 1, x: 0, duration: 0.38, ease: "power3.out" },      S3 + 0.82);
+    tl.fromTo("#s3-model",        { autoAlpha: 0, x: 38, scale: 0.86 }, { autoAlpha: 1, x: 0, scale: 1, duration: 0.55, ease: "back.out(2.4)", overwrite: "auto" }, S3 + 1.12);
+    tl.fromTo("#s3-delta",        { autoAlpha: 0, scale: 0.68 }, { autoAlpha: 1, scale: 1, duration: 0.42, ease: "back.out(2.8)" }, S3 + 1.76);
+    tl.fromTo("#s3-insight",      { autoAlpha: 0, y: 28 },   { autoAlpha: 1, y: 0, duration: 0.42, ease: "power2.out" },      S3 + 2.24);
+    // Subtle model box pulse during hold
+    tl.to("#s3-model", { scale: 1.03, duration: 0.30, ease: "sine.inOut", yoyo: true, repeat: 1 },                             S3 + 2.65);
+
+    // Transition S3 → S4: directional blur push left (T=10.0)
+    var T34 = 10.0;
+    tl.to("#s3",   { filter: "blur(12px)", skewX: -5, x: -150, opacity: 0, duration: 0.40, ease: "power3.in" },               T34);
+    tl.fromTo("#s4", { filter: "blur(12px)", skewX: 5, x: 150, opacity: 0 }, { filter: "blur(0px)", skewX: 0, x: 0, opacity: 1, duration: 0.40, ease: "power3.out", overwrite: "auto" }, T34 + 0.16);
+    tl.set("#s3",  { visibility: "hidden" }, T34 + 0.46);
+
+    // ── SCENE 4 — WHY (S4≈10.22s) ──────────────────────────────────────────
+    var S4 = T34 + 0.22;
+    tl.fromTo("#s4-eyebrow",      { autoAlpha: 0, y: -22 },   { autoAlpha: 1, y: 0, duration: 0.32, ease: "back.out(2.0)" },  S4 + 0.10);
+    tl.fromTo("#s4-why-label",    { autoAlpha: 0, x: -48 },  { autoAlpha: 1, x: 0, duration: 0.44, ease: "power3.out" },      S4 + 0.28);
+    tl.fromTo("#s4-wickets",      { autoAlpha: 0, scale: 0.62 }, { autoAlpha: 1, scale: 1, duration: 0.58, ease: "back.out(2.0)" }, S4 + 0.66);
+    tl.fromTo("#s4-wickets-label",{ autoAlpha: 0 },           { autoAlpha: 1, duration: 0.28, ease: "power1.out" },            S4 + 1.02);
+    tl.fromTo("#s4-rule",         { scaleX: 0 },              { scaleX: 1, duration: 0.50, ease: "power2.inOut" },             S4 + 1.22);
+    tl.fromTo("#s4-proof",        { autoAlpha: 0, y: 38 },   { autoAlpha: 1, y: 0, duration: 0.50, ease: "back.out(1.6)" },   S4 + 1.52);
+    tl.fromTo("#s4-lesson",       { autoAlpha: 0, y: 22 },   { autoAlpha: 1, y: 0, duration: 0.40, ease: "expo.out" },        S4 + 2.22);
+
+    // Transition S4 → S5: blur crossfade medium (T=13.5)
+    var T45 = 13.5;
+    tl.to("#s4",   { filter: "blur(12px)", scale: 1.04, opacity: 0, duration: 0.40, ease: "power2.in" },                      T45);
+    tl.fromTo("#s5", { filter: "blur(12px)", scale: 0.96, opacity: 0 }, { filter: "blur(0px)", scale: 1, opacity: 1, duration: 0.40, ease: "power2.out", overwrite: "auto" }, T45 + 0.20);
+    tl.set("#s4",  { visibility: "hidden" }, T45 + 0.46);
+
+    // ── SCENE 5 — PROBABILITY TRACK (S5≈13.75s) ────────────────────────────
+    var S5 = T45 + 0.25;
+    tl.fromTo("#s5-eyebrow",      { autoAlpha: 0, y: -22 },   { autoAlpha: 1, y: 0, duration: 0.32, ease: "back.out(2.0)" },  S5 + 0.10);
+    tl.fromTo("#s5-header",       { autoAlpha: 0, y: 28 },   { autoAlpha: 1, y: 0, duration: 0.44, ease: "expo.out" },        S5 + 0.28);
+
+    // Row 6 enters, then bar fills
+    tl.fromTo("#s5-row6",         { autoAlpha: 0, x: -48 },  { autoAlpha: 1, x: 0, duration: 0.36, ease: "power3.out" },      S5 + 0.62);
+    var proxy6 = { val: 0 };
+    tl.fromTo(proxy6, { val: 0 }, {
+      val: 72, duration: 0.82, ease: "power2.out",
+      onUpdate: function() {
+        var bar = document.getElementById("bar6");
+        if (bar) bar.style.transform = "scaleX(" + (proxy6.val / 100) + ")";
+        var pct = document.getElementById("pct6");
+        if (pct) pct.textContent = Math.round(proxy6.val) + "%";
+      }
+    }, S5 + 0.82);
+
+    // Row 11
+    tl.fromTo("#s5-row11",        { autoAlpha: 0, x: -48 },  { autoAlpha: 1, x: 0, duration: 0.36, ease: "power3.out" },      S5 + 1.34);
+    var proxy11 = { val: 0 };
+    tl.fromTo(proxy11, { val: 0 }, {
+      val: 90, duration: 0.82, ease: "power2.out",
+      onUpdate: function() {
+        var bar = document.getElementById("bar11");
+        if (bar) bar.style.transform = "scaleX(" + (proxy11.val / 100) + ")";
+        var pct = document.getElementById("pct11");
+        if (pct) pct.textContent = Math.round(proxy11.val) + "%";
+      }
+    }, S5 + 1.54);
+
+    // Row 12
+    tl.fromTo("#s5-row12",        { autoAlpha: 0, x: -48 },  { autoAlpha: 1, x: 0, duration: 0.36, ease: "power3.out" },      S5 + 2.06);
+    var proxy12 = { val: 0 };
+    tl.fromTo(proxy12, { val: 0 }, {
+      val: 99, duration: 0.82, ease: "power2.out",
+      onUpdate: function() {
+        var bar = document.getElementById("bar12");
+        if (bar) bar.style.transform = "scaleX(" + (proxy12.val / 100) + ")";
+        var pct = document.getElementById("pct12");
+        if (pct) pct.textContent = Math.round(proxy12.val) + "%";
+      }
+    }, S5 + 2.26);
+
+    tl.fromTo("#s5-insight",      { autoAlpha: 0, y: 22 },   { autoAlpha: 1, y: 0, duration: 0.40, ease: "power2.out" },      S5 + 2.76);
+
+    // Transition S5 → S6: crossfade resolve (T=16.6)
+    var T56 = 16.6;
+    tl.to("#s5",   { opacity: 0, duration: 0.44, ease: "power2.inOut" },                                                       T56);
+    tl.fromTo("#s6", { opacity: 0 }, { opacity: 1, duration: 0.44, ease: "power2.inOut" },                                    T56);
+    tl.set("#s5",  { visibility: "hidden" }, T56 + 0.48);
+
+    // ── SCENE 6 — RESULT + CTA (S6≈17.1s) ─────────────────────────────────
+    var S6 = T56 + 0.50;
+    tl.fromTo("#s6-eyebrow",      { autoAlpha: 0, y: -22 },   { autoAlpha: 1, y: 0, duration: 0.32, ease: "back.out(2.0)" },  S6 + 0.10);
+    tl.fromTo("#s6-won",          { autoAlpha: 0, scale: 0.72 }, { autoAlpha: 1, scale: 1, duration: 0.58, ease: "back.out(2.0)" }, S6 + 0.30);
+    tl.fromTo("#s6-won-team",     { autoAlpha: 0, y: 28 },   { autoAlpha: 1, y: 0, duration: 0.40, ease: "expo.out" },        S6 + 0.68);
+    tl.fromTo("#s6-called",       { autoAlpha: 0 },           { autoAlpha: 1, duration: 0.30, ease: "power2.out" },            S6 + 0.94);
+    tl.fromTo("#s6-rule",         { scaleX: 0 },              { scaleX: 1, duration: 0.46, ease: "power2.inOut" },             S6 + 1.12);
+    tl.fromTo("#s6-phil-line1",   { autoAlpha: 0, y: 20 },   { autoAlpha: 1, y: 0, duration: 0.38, ease: "power3.out" },      S6 + 1.34);
+    tl.fromTo("#s6-phil-line2",   { autoAlpha: 0, y: 20 },   { autoAlpha: 1, y: 0, duration: 0.42, ease: "sine.out" },        S6 + 1.60);
+    tl.fromTo("#s6-cta",          { autoAlpha: 0, y: 38, scale: 0.93 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.52, ease: "back.out(1.8)" }, S6 + 1.86);
+    tl.fromTo("#s6-watermark",    { autoAlpha: 0 },           { autoAlpha: 1, duration: 0.30, ease: "power1.out" },            S6 + 2.18);
+    // CTA pulse
+    tl.to("#s6-cta", { scale: 1.022, duration: 0.34, ease: "sine.inOut", yoyo: true, repeat: 1 },                              S6 + 2.40);
+
+    // Final fade to dark (only allowed on last scene)
+    tl.to("#s6", { opacity: 0, duration: 0.46, ease: "power2.in" }, 19.50);
+
+    window.__timelines["powerplay-signal"] = tl;
+  </script>
+</body>
+</html>
