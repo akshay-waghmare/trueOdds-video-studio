@@ -15,6 +15,7 @@
       --text:   #ffffff;
       --muted:  #a0a8b8;
     }
+    /* v2: S3 hero redesign, glow bursts, no quote boxes, 221 counter */
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -65,7 +66,8 @@
     #s2 {
       z-index: 2; opacity: 0;
       background:
-        radial-gradient(circle at 50% 28%, rgba(0,201,167,0.14) 0%, transparent 40%),
+        radial-gradient(circle at 50% 28%, rgba(0,201,167,0.22) 0%, transparent 42%),
+        radial-gradient(circle at 75% 72%, rgba(0,201,167,0.06) 0%, transparent 30%),
         linear-gradient(165deg, #08080d 0%, #0d0f1a 55%, #09090f 100%);
     }
 
@@ -81,6 +83,7 @@
       z-index: 4; opacity: 0;
       background:
         radial-gradient(circle at 28% 18%, rgba(255,76,76,0.12) 0%, transparent 40%),
+        radial-gradient(circle at 60% 55%, rgba(0,201,167,0.10) 0%, transparent 36%),
         linear-gradient(165deg, #08080d 0%, #0d0f1a 55%, #09090f 100%);
     }
 
@@ -98,12 +101,24 @@
         linear-gradient(165deg, #080810 0%, #0e1020 55%, #090910 100%);
     }
 
+    #s6-ghost {
+      position: absolute; bottom: -60px; left: -40px;
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 680px; font-weight: 900; line-height: 0.82;
+      color: rgba(245,197,24,0.05);
+      letter-spacing: 0.02em;
+      pointer-events: none; user-select: none;
+    }
+
+    #s6 .sc { align-items: center; text-align: center; }
+
     /* ── Content wrapper (fills scene, padding insets content) ── */
     .sc {
       position: relative; z-index: 2;
       width: 100%; height: 100%;
       padding: 80px 74px 60px;
       display: flex; flex-direction: column;
+      justify-content: center;
     }
 
     /* ── Shared components ── */
@@ -146,14 +161,8 @@
       pointer-events: none; user-select: none;
     }
 
-    #s1-match {
-      margin-top: 22px;
-      font-size: 30px; font-weight: 700;
-      letter-spacing: 0.10em; color: var(--muted); text-transform: uppercase;
-    }
-
     #s1-yesterday {
-      margin-top: 26px;
+      margin-top: 30px;
       font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
       font-size: 160px; font-weight: 900; line-height: 0.88;
       letter-spacing: 0.02em; color: var(--yellow);
@@ -173,8 +182,9 @@
 
     #s1-target {
       font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
-      font-size: 140px; font-weight: 900; line-height: 0.88;
+      font-size: 230px; font-weight: 900; line-height: 0.82;
       letter-spacing: 0.04em; color: var(--text);
+      text-shadow: 0 0 100px rgba(255,255,255,0.22), 0 0 30px rgba(255,255,255,0.10);
     }
 
     #s1-target-unit {
@@ -186,9 +196,9 @@
     #s1-rule { margin-top: 34px; }
 
     #s1-hook-text {
-      margin-top: 28px;
-      font-size: 44px; font-weight: 800; line-height: 1.30;
-      color: rgba(255,255,255,0.84);
+      margin-top: 30px;
+      font-size: 52px; font-weight: 800; line-height: 1.28;
+      color: rgba(255,255,255,0.88);
     }
 
     #s1-hook-text em { color: var(--yellow); font-style: normal; }
@@ -211,7 +221,7 @@
     #s2-score {
       margin-top: 10px;
       font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
-      font-size: 220px; font-weight: 900; line-height: 0.86;
+      font-size: 240px; font-weight: 900; line-height: 0.86;
       letter-spacing: 0.02em; color: var(--teal);
     }
 
@@ -223,7 +233,7 @@
 
     #s2-stats-card { margin-top: 28px; }
 
-    .stat-row {
+    /* ══════════════════ SCENE 3 — THE CALL ══════════════════ */
       display: flex; align-items: center; justify-content: space-between;
       padding: 16px 0;
       border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -246,99 +256,108 @@
     .stat-value.red    { color: var(--red); }
     .stat-value.yellow { color: var(--yellow); }
 
-    #s2-quote {
-      margin-top: 24px;
-      padding: 20px 26px; border-radius: 18px;
-      background: rgba(255,76,76,0.06);
-      border-left: 3px solid rgba(255,76,76,0.35);
+    /* ══════════════════ SCENE 3 — THE CALL (hero redesign) ══════════════════ */
+    /* Center all S3 content for maximum visual impact */
+    #s3 .sc {
+      align-items: center;
+      text-align: center;
     }
 
-    #s2-quote-text {
-      font-size: 28px; font-weight: 600; font-style: italic;
-      line-height: 1.50; color: rgba(255,255,255,0.62);
+    #s3 .sc #s3-vs-row {
+      justify-content: center;
     }
 
-    /* ══════════════════ SCENE 3 — THE CALL ══════════════════ */
+    #s3 .sc #s3-delta {
+      align-self: center;
+    }
+
+    /* Ghost giant number behind the scene */
+    #s3-ghost {
+      position: absolute; top: 80px; left: -30px;
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 680px; font-weight: 900; line-height: 0.82;
+      color: rgba(245,197,24,0.04);
+      letter-spacing: 0.02em;
+      pointer-events: none; user-select: none;
+    }
+
+    #s4-ghost {
+      position: absolute; top: -40px; right: -60px;
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 700px; font-weight: 900; line-height: 0.82;
+      color: rgba(255,76,76,0.08);
+      letter-spacing: 0.02em;
+      pointer-events: none; user-select: none;
+    }
+
+    #s5-ghost {
+      position: absolute; bottom: -60px; right: -40px;
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 620px; font-weight: 900; line-height: 0.82;
+      color: rgba(0,201,167,0.08);
+      letter-spacing: 0.02em;
+      pointer-events: none; user-select: none;
+    }
+
+    /* Animated radial glow burst */
+    #s3-glow-burst {
+      position: absolute; z-index: 1;
+      top: 32%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 960px; height: 960px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(245,197,24,0.32) 0%, rgba(245,197,24,0.08) 40%, transparent 70%);
+      pointer-events: none;
+    }
+
     #s3-sub {
-      margin-top: 20px;
+      margin-top: 18px;
       font-size: 26px; font-weight: 700;
       letter-spacing: 0.10em; color: var(--muted); text-transform: uppercase;
     }
 
-    #s3-call-header {
-      margin-top: 10px;
+    /* The hero number — fills the visual field */
+    #s3-model-pct {
+      margin-top: 20px;
       font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
-      font-size: 160px; font-weight: 900; line-height: 0.86;
-      letter-spacing: 0.04em; color: var(--text);
+      font-size: 340px; font-weight: 900; line-height: 0.82;
+      letter-spacing: 0.02em; color: var(--yellow);
+      text-shadow: 0 0 140px rgba(245,197,24,0.75), 0 0 40px rgba(245,197,24,0.40);
     }
 
-    #s3-compare {
-      margin-top: 32px;
-      display: flex; gap: 18px; align-items: stretch;
+    #s3-model-label {
+      margin-top: 14px;
+      font-size: 30px; font-weight: 900;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal);
     }
 
-    .compare-box {
-      flex: 1; padding: 26px 20px 22px;
-      border-radius: 22px; text-align: center;
+    /* Public estimate — visually subordinate */
+    #s3-vs-row {
+      margin-top: 22px;
+      display: flex; align-items: baseline; gap: 14px;
     }
 
-    .compare-box.public {
-      background: rgba(160,168,184,0.06);
-      border: 1px solid rgba(160,168,184,0.18);
-    }
-
-    .compare-box.model {
-      background: rgba(245,197,24,0.08);
-      border: 1px solid rgba(245,197,24,0.38);
-      box-shadow: 0 0 64px rgba(245,197,24,0.12);
-    }
-
-    .compare-label {
-      font-size: 22px; font-weight: 900;
-      letter-spacing: 0.18em; text-transform: uppercase;
-    }
-
-    .compare-box.public .compare-label { color: var(--muted); }
-    .compare-box.model  .compare-label { color: var(--yellow); }
-
-    .compare-pct {
+    #s3-public-pct {
       font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
-      font-weight: 900; line-height: 0.86; margin-top: 10px;
+      font-size: 80px; font-weight: 900; line-height: 0.82;
+      color: rgba(160,168,184,0.38);
     }
 
-    .compare-box.public .compare-pct { font-size: 110px; color: rgba(160,168,184,0.55); }
-    .compare-box.model  .compare-pct { font-size: 140px; color: var(--yellow); text-shadow: 0 0 40px rgba(245,197,24,0.55); }
-
-    .compare-sub {
-      margin-top: 8px; font-size: 18px; font-weight: 700;
-      letter-spacing: 0.10em; text-transform: uppercase;
+    #s3-public-label {
+      font-size: 24px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(160,168,184,0.36);
     }
-
-    .compare-box.public .compare-sub { color: rgba(160,168,184,0.42); }
-    .compare-box.model  .compare-sub { color: rgba(245,197,24,0.56); }
 
     #s3-delta {
-      margin-top: 22px;
-      display: flex; align-items: center; justify-content: center; gap: 14px;
+      margin-top: 28px;
+      display: inline-flex; align-items: center; gap: 14px;
       padding: 16px 32px; border-radius: 999px;
       background: rgba(0,201,167,0.10); border: 1px solid rgba(0,201,167,0.36);
       font-size: 30px; font-weight: 900;
       letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal);
+      width: fit-content;
     }
-
-    #s3-insight {
-      margin-top: 24px;
-      padding: 20px 26px; border-radius: 18px;
-      background: rgba(245,197,24,0.06);
-      border-left: 3px solid rgba(245,197,24,0.35);
-    }
-
-    #s3-insight-text {
-      font-size: 29px; font-weight: 700; line-height: 1.50;
-      color: rgba(255,255,255,0.82);
-    }
-
-    #s3-insight-text strong { color: var(--yellow); }
 
     /* ══════════════════ SCENE 4 — WHY ══════════════════ */
     #s4-why-label {
@@ -349,10 +368,11 @@
     }
 
     #s4-wickets {
-      margin-top: 18px;
+      margin-top: 14px;
       font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
-      font-size: 180px; font-weight: 900; line-height: 0.86;
+      font-size: 260px; font-weight: 900; line-height: 0.82;
       letter-spacing: 0.02em; color: var(--teal);
+      text-shadow: 0 0 140px rgba(0,201,167,0.70), 0 0 50px rgba(0,201,167,0.35);
     }
 
     #s4-wickets-label {
@@ -377,52 +397,40 @@
 
     #s4-proof-text {
       font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
-      font-size: 72px; font-weight: 900; line-height: 1.0; color: var(--text);
+      font-size: 96px; font-weight: 900; line-height: 0.92; color: var(--text);
     }
 
     #s4-proof-sub {
-      margin-top: 10px;
-      font-size: 25px; font-weight: 600; line-height: 1.45;
-      color: rgba(255,255,255,0.62);
-    }
-
-    #s4-lesson {
-      margin-top: 24px;
-      padding: 20px 26px; border-radius: 18px;
-      background: rgba(245,197,24,0.06);
-      border-left: 3px solid rgba(245,197,24,0.35);
-    }
-
-    #s4-lesson-text {
-      font-size: 28px; font-weight: 600; font-style: italic;
-      line-height: 1.50; color: rgba(255,255,255,0.80);
+      margin-top: 12px;
+      font-size: 26px; font-weight: 600; line-height: 1.45;
+      color: rgba(255,255,255,0.65);
     }
 
     /* ══════════════════ SCENE 5 — PROBABILITY TRACK ══════════════════ */
     #s5-header {
-      margin-top: 22px;
+      margin-top: 18px;
       font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
-      font-size: 88px; font-weight: 900; line-height: 0.90;
+      font-size: 100px; font-weight: 900; line-height: 0.90;
       letter-spacing: 0.04em; color: var(--text);
     }
 
     #s5-header span { color: var(--teal); }
 
-    #s5-bars { margin-top: 32px; display: flex; flex-direction: column; gap: 26px; }
+    #s5-bars { margin-top: 32px; display: flex; flex-direction: column; gap: 32px; }
 
-    .track-row { display: flex; flex-direction: column; gap: 8px; }
+    .track-row { display: flex; flex-direction: column; gap: 10px; }
 
     .track-meta {
       display: flex; justify-content: space-between; align-items: center;
     }
 
     .track-over {
-      font-size: 26px; font-weight: 900;
+      font-size: 28px; font-weight: 900;
       letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
     }
 
     .track-score {
-      font-size: 22px; font-weight: 700;
+      font-size: 24px; font-weight: 700;
       color: rgba(255,255,255,0.50);
     }
 
@@ -432,53 +440,52 @@
 
     .track-bar-wrap {
       flex: 1; position: relative;
-      height: 54px; border-radius: 10px;
+      height: 78px; border-radius: 14px;
       background: rgba(255,255,255,0.07); overflow: hidden;
     }
 
     .track-bar {
       position: absolute; top: 0; left: 0;
-      height: 100%; border-radius: 10px;
+      width: 100%; height: 100%; border-radius: 12px;
       transform: scaleX(0);
       transform-origin: left center;
     }
 
     .track-bar.over6  { background: linear-gradient(90deg, #00c9a7, #00a88a); }
+    .track-bar.over7  { background: linear-gradient(90deg, #ff4c4c, #c93232); box-shadow: 0 0 18px rgba(255,76,76,0.30); }
     .track-bar.over11 { background: linear-gradient(90deg, #f5c518, #c9a414); }
-    .track-bar.over12 { background: linear-gradient(90deg, #f5c518, #ffde60); }
+    .track-bar.over12 { background: linear-gradient(90deg, #f5c518, #ffde60); box-shadow: 0 0 24px rgba(245,197,24,0.35); }
 
     .track-pct-label {
-      width: 80px; text-align: right;
+      width: 90px; text-align: right;
       font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
-      font-size: 44px; font-weight: 900; line-height: 1;
+      font-size: 52px; font-weight: 900; line-height: 1;
       letter-spacing: 0.02em; flex-shrink: 0;
       font-variant-numeric: tabular-nums;
     }
 
     .track-pct-label.teal   { color: var(--teal); }
     .track-pct-label.yellow { color: var(--yellow); }
-
-    #s5-insight {
-      margin-top: 28px;
-      padding: 20px 26px; border-radius: 18px;
-      background: rgba(0,201,167,0.06);
-      border-left: 3px solid rgba(0,201,167,0.35);
-    }
-
-    #s5-insight-text {
-      font-size: 27px; font-weight: 600; line-height: 1.50;
-      color: rgba(255,255,255,0.78);
-    }
-
-    #s5-insight-text strong { color: var(--teal); }
+    .track-pct-label.red    { color: #ff4c4c; }
 
     /* ══════════════════ SCENE 6 — RESULT + CTA ══════════════════ */
+    /* Gold explosion burst behind RR */
+    #s6-glow-burst {
+      position: absolute; z-index: 1;
+      top: 18%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 1020px; height: 1020px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(245,197,24,0.42) 0%, rgba(245,197,24,0.10) 38%, transparent 70%);
+      pointer-events: none;
+    }
+
     #s6-won {
       margin-top: 26px;
       font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
-      font-size: 240px; font-weight: 900; line-height: 0.82;
+      font-size: 260px; font-weight: 900; line-height: 0.82;
       letter-spacing: 0.02em; color: var(--yellow);
-      text-shadow: 0 0 100px rgba(245,197,24,0.60);
+      text-shadow: 0 0 120px rgba(245,197,24,0.80), 0 0 40px rgba(245,197,24,0.45);
     }
 
     #s6-won-team {
@@ -552,13 +559,12 @@
       <div class="sc">
         <div id="s1-eyebrow" class="eyebrow-pill teal">
           <span class="eyebrow-dot"></span>
-          LIVE MATCH RECORD &middot; MAY 19
+          LSG vs RR &nbsp;&middot;&nbsp; MAY 19
         </div>
-        <div id="s1-match">LSG vs RR &nbsp;&middot;&nbsp; IPL 2026</div>
         <div id="s1-yesterday">YESTERDAY</div>
         <div id="s1-chasing-line">RR was chasing</div>
         <div id="s1-target-row">
-          <span id="s1-target">221</span>
+          <span id="s1-target">0</span>
           <span id="s1-target-unit">RUNS</span>
         </div>
         <div id="s1-rule" class="rule-h"></div>
@@ -595,47 +601,34 @@
             <div class="stat-value red">10.7</div>
           </div>
         </div>
-        <div id="s2-quote">
-          <div id="s2-quote-text">"Too far behind. That required rate is impossible from here."</div>
-        </div>
       </div>
     </div>
 
     <!-- ══════════════════ SCENE 3 — THE CALL ══════════════════ -->
     <div id="s3" class="scene">
+      <div id="s3-ghost">72</div>
+      <div id="s3-glow-burst"></div>
       <div class="sc">
         <div id="s3-eyebrow" class="eyebrow-pill yellow">
           <span class="eyebrow-dot"></span>
           THE MODEL CALL &nbsp;&middot;&nbsp; OVER 6
         </div>
-        <div id="s3-sub">Real-time probability — both sides</div>
-        <div id="s3-call-header">THE CALL</div>
-        <div id="s3-compare">
-          <div class="compare-box public" id="s3-public">
-            <div class="compare-label">Public</div>
-            <div class="compare-pct">~35%</div>
-            <div class="compare-sub">estimate</div>
-          </div>
-          <div class="compare-box model" id="s3-model">
-            <div class="compare-label">Model</div>
-            <div class="compare-pct">72%</div>
-            <div class="compare-sub">RR win prob</div>
-          </div>
+        <div id="s3-sub">Real-time probability at powerplay end</div>
+        <div id="s3-model-pct">72%</div>
+        <div id="s3-model-label">RR WIN PROBABILITY</div>
+        <div id="s3-vs-row">
+          <span id="s3-public-pct">~35%</span>
+          <span id="s3-public-label">PUBLIC ESTIMATE</span>
         </div>
         <div id="s3-delta">
           <span>&#8593;</span> 37 POINT EDGE
-        </div>
-        <div id="s3-insight">
-          <div id="s3-insight-text">
-            <strong>0 wickets at powerplay end.</strong> 10 resources intact.
-            The score looked hard. The model read resources.
-          </div>
         </div>
       </div>
     </div>
 
     <!-- ══════════════════ SCENE 4 — WHY ══════════════════ -->
     <div id="s4" class="scene">
+      <div id="s4-ghost">10</div>
       <div class="sc">
         <div id="s4-eyebrow" class="eyebrow-pill red">
           <span class="eyebrow-dot"></span>
@@ -648,16 +641,14 @@
         <div id="s4-proof">
           <div id="s4-proof-label">&#9888; Live Proof &mdash; Over 7</div>
           <div id="s4-proof-text">72% &#8594; 44%</div>
-          <div id="s4-proof-sub">RR lost their first wicket. One ball. Model dropped 28 points instantly. The score barely changed. The wicket did it.</div>
-        </div>
-        <div id="s4-lesson">
-          <div id="s4-lesson-text">Wickets are resources. Resources are probability. Score is just the surface.</div>
+          <div id="s4-proof-sub">One wicket. One ball. Model dropped 28 points. Score barely changed.</div>
         </div>
       </div>
     </div>
 
     <!-- ══════════════════ SCENE 5 — PROBABILITY TRACK ══════════════════ -->
     <div id="s5" class="scene">
+      <div id="s5-ghost">72</div>
       <div class="sc">
         <div id="s5-eyebrow" class="eyebrow-pill teal">
           <span class="eyebrow-dot"></span>
@@ -676,6 +667,19 @@
                 <div class="track-bar over6" id="bar6"></div>
               </div>
               <div class="track-pct-label teal" id="pct6">72%</div>
+            </div>
+          </div>
+
+          <div class="track-row" id="s5-row7">
+            <div class="track-meta">
+              <div class="track-over" style="color:#ff4c4c;">Over 7 — Wicket Falls</div>
+              <div class="track-score">84/1 &nbsp;&middot;&nbsp; RRR 10.5</div>
+            </div>
+            <div class="track-bar-row">
+              <div class="track-bar-wrap">
+                <div class="track-bar over7" id="bar7"></div>
+              </div>
+              <div class="track-pct-label red" id="pct7">44%</div>
             </div>
           </div>
 
@@ -706,17 +710,13 @@
           </div>
 
         </div>
-        <div id="s5-insight">
-          <div id="s5-insight-text">
-            After over 12: <strong>166 scored. 55 needed. 9 wickets. 48 balls.</strong>
-            The model saw what the scoreboard could not.
-          </div>
-        </div>
       </div>
     </div>
 
     <!-- ══════════════════ SCENE 6 — RESULT + CTA ══════════════════ -->
     <div id="s6" class="scene">
+      <div id="s6-ghost">RR</div>
+      <div id="s6-glow-burst"></div>
       <div class="sc">
         <div id="s6-eyebrow" class="eyebrow-pill yellow">
           <span class="eyebrow-dot"></span>
@@ -749,7 +749,6 @@
     // Scene 1
     gsap.set("#s1-ghost",        { autoAlpha: 0 });
     gsap.set("#s1-eyebrow",      { autoAlpha: 0, y: -22 });
-    gsap.set("#s1-match",        { autoAlpha: 0, x: -40 });
     gsap.set("#s1-yesterday",    { autoAlpha: 0, y: 55, scale: 0.88 });
     gsap.set("#s1-chasing-line", { autoAlpha: 0 });
     gsap.set("#s1-target-row",   { autoAlpha: 0, y: 36 });
@@ -763,38 +762,38 @@
     gsap.set("#s2-score",        { autoAlpha: 0, scale: 0.82 });
     gsap.set("#s2-score-label",  { autoAlpha: 0 });
     gsap.set("#s2-stats-card",   { autoAlpha: 0, y: 38, scale: 0.96 });
-    gsap.set("#s2-quote",        { autoAlpha: 0, x: -28 });
 
     // Scene 3
+    gsap.set("#s3-glow-burst",   { scale: 0, opacity: 0 });
     gsap.set("#s3-eyebrow",      { autoAlpha: 0, y: -22 });
     gsap.set("#s3-sub",          { autoAlpha: 0 });
-    gsap.set("#s3-call-header",  { autoAlpha: 0, y: 32 });
-    gsap.set("#s3-public",       { autoAlpha: 0, x: -38 });
-    gsap.set("#s3-model",        { autoAlpha: 0, x: 38, scale: 0.86 });
+    gsap.set("#s3-model-pct",    { autoAlpha: 0, scale: 1.7, y: -30 });
+    gsap.set("#s3-model-label",  { autoAlpha: 0, y: 20 });
+    gsap.set("#s3-vs-row",       { autoAlpha: 0 });
     gsap.set("#s3-delta",        { autoAlpha: 0, scale: 0.68 });
-    gsap.set("#s3-insight",      { autoAlpha: 0, y: 28 });
 
     // Scene 4
+    gsap.set("#s4-ghost",        { autoAlpha: 0 });
     gsap.set("#s4-eyebrow",      { autoAlpha: 0, y: -22 });
     gsap.set("#s4-why-label",    { autoAlpha: 0, x: -48 });
     gsap.set("#s4-wickets",      { autoAlpha: 0, scale: 0.62 });
     gsap.set("#s4-wickets-label",{ autoAlpha: 0 });
     gsap.set("#s4-rule",         { scaleX: 0 });
     gsap.set("#s4-proof",        { autoAlpha: 0, y: 38 });
-    gsap.set("#s4-lesson",       { autoAlpha: 0, y: 22 });
 
     // Scene 5
+    gsap.set("#s5-ghost",        { autoAlpha: 0 });
     gsap.set("#s5-eyebrow",      { autoAlpha: 0, y: -22 });
     gsap.set("#s5-header",       { autoAlpha: 0, y: 28 });
     gsap.set("#s5-row6",         { autoAlpha: 0, x: -48 });
+    gsap.set("#s5-row7",         { autoAlpha: 0, x: -48 });
     gsap.set("#s5-row11",        { autoAlpha: 0, x: -48 });
     gsap.set("#s5-row12",        { autoAlpha: 0, x: -48 });
-    gsap.set("#bar6",            { scaleX: 0 });
-    gsap.set("#bar11",           { scaleX: 0 });
-    gsap.set("#bar12",           { scaleX: 0 });
-    gsap.set("#s5-insight",      { autoAlpha: 0, y: 22 });
+    // Note: .track-bar CSS already has transform: scaleX(0) — GSAP fromTo handles initial state
 
     // Scene 6
+    gsap.set("#s6-ghost",        { autoAlpha: 0 });
+    gsap.set("#s6-glow-burst",   { scale: 0, opacity: 0 });
     gsap.set("#s6-eyebrow",      { autoAlpha: 0, y: -22 });
     gsap.set("#s6-won",          { autoAlpha: 0, scale: 0.72 });
     gsap.set("#s6-won-team",     { autoAlpha: 0, y: 28 });
@@ -808,12 +807,20 @@
     // ── SCENE 1 — HOOK (0–2.6s) ────────────────────────────────────────────
     tl.fromTo("#s1-ghost",        { autoAlpha: 0 },         { autoAlpha: 1, duration: 2.2, ease: "power1.out" },              0.10);
     tl.fromTo("#s1-eyebrow",      { autoAlpha: 0, y: -22 }, { autoAlpha: 1, y: 0, duration: 0.34, ease: "back.out(2.2)" },   0.18);
-    tl.fromTo("#s1-match",        { autoAlpha: 0, x: -40 }, { autoAlpha: 1, x: 0, duration: 0.30, ease: "power3.out" },      0.34);
-    tl.fromTo("#s1-yesterday",    { autoAlpha: 0, y: 55, scale: 0.88 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.52, ease: "back.out(1.8)" }, 0.58);
-    tl.fromTo("#s1-chasing-line", { autoAlpha: 0 },         { autoAlpha: 1, duration: 0.28, ease: "power2.out" },             1.15);
-    tl.fromTo("#s1-target-row",   { autoAlpha: 0, y: 36 },  { autoAlpha: 1, y: 0, duration: 0.44, ease: "expo.out" },        1.32);
-    tl.fromTo("#s1-rule",         { scaleX: 0 },             { scaleX: 1, duration: 0.52, ease: "power2.inOut" },             1.78);
-    tl.fromTo("#s1-hook-text",    { autoAlpha: 0, y: 28 },  { autoAlpha: 1, y: 0, duration: 0.42, ease: "power2.out" },      2.18);
+    tl.fromTo("#s1-yesterday",    { autoAlpha: 0, y: 55, scale: 0.88 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.52, ease: "back.out(1.8)" }, 0.44);
+    tl.fromTo("#s1-chasing-line", { autoAlpha: 0 },         { autoAlpha: 1, duration: 0.28, ease: "power2.out" },             1.00);
+    tl.fromTo("#s1-target-row",   { autoAlpha: 0, y: 36 },  { autoAlpha: 1, y: 0, duration: 0.44, ease: "expo.out" },        1.18);
+    // Counter animation: 0 → 221
+    var target221 = { val: 0 };
+    tl.fromTo(target221, { val: 0 }, {
+      val: 221, duration: 0.80, ease: "power2.out",
+      onUpdate: function() {
+        var el = document.getElementById("s1-target");
+        if (el) el.textContent = Math.round(target221.val);
+      }
+    }, 1.22);
+    tl.fromTo("#s1-rule",         { scaleX: 0 },             { scaleX: 1, duration: 0.52, ease: "power2.inOut" },             1.72);
+    tl.fromTo("#s1-hook-text",    { autoAlpha: 0, y: 28 },  { autoAlpha: 1, y: 0, duration: 0.42, ease: "power2.out" },      2.12);
 
     // Transition S1 → S2: blur crossfade medium (T=2.6)
     var T12 = 2.6;
@@ -829,7 +836,6 @@
     tl.fromTo("#s2-score",        { autoAlpha: 0, scale: 0.82 }, { autoAlpha: 1, scale: 1, duration: 0.58, ease: "back.out(2.2)" }, S2 + 0.52);
     tl.fromTo("#s2-score-label",  { autoAlpha: 0 },           { autoAlpha: 1, duration: 0.28, ease: "power1.out" },            S2 + 0.84);
     tl.fromTo("#s2-stats-card",   { autoAlpha: 0, y: 38, scale: 0.96 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.50, ease: "power3.out" }, S2 + 1.02);
-    tl.fromTo("#s2-quote",        { autoAlpha: 0, x: -28 },  { autoAlpha: 1, x: 0, duration: 0.40, ease: "expo.out" },        S2 + 1.74);
 
     // Transition S2 → S3: color dip / smash cut for the reveal (T=6.1)
     var T23 = 6.1;
@@ -839,15 +845,21 @@
 
     // ── SCENE 3 — THE CALL (S3≈6.35s) ──────────────────────────────────────
     var S3 = T23 + 0.26;
-    tl.fromTo("#s3-eyebrow",      { autoAlpha: 0, y: -22 },   { autoAlpha: 1, y: 0, duration: 0.32, ease: "back.out(2.0)" },  S3 + 0.10);
-    tl.fromTo("#s3-sub",          { autoAlpha: 0 },           { autoAlpha: 1, duration: 0.26, ease: "power2.out" },            S3 + 0.28);
-    tl.fromTo("#s3-call-header",  { autoAlpha: 0, y: 32 },   { autoAlpha: 1, y: 0, duration: 0.50, ease: "expo.out" },        S3 + 0.46);
-    tl.fromTo("#s3-public",       { autoAlpha: 0, x: -38 },  { autoAlpha: 1, x: 0, duration: 0.38, ease: "power3.out" },      S3 + 0.82);
-    tl.fromTo("#s3-model",        { autoAlpha: 0, x: 38, scale: 0.86 }, { autoAlpha: 1, x: 0, scale: 1, duration: 0.55, ease: "back.out(2.4)", overwrite: "auto" }, S3 + 1.12);
-    tl.fromTo("#s3-delta",        { autoAlpha: 0, scale: 0.68 }, { autoAlpha: 1, scale: 1, duration: 0.42, ease: "back.out(2.8)" }, S3 + 1.76);
-    tl.fromTo("#s3-insight",      { autoAlpha: 0, y: 28 },   { autoAlpha: 1, y: 0, duration: 0.42, ease: "power2.out" },      S3 + 2.24);
-    // Subtle model box pulse during hold
-    tl.to("#s3-model", { scale: 1.03, duration: 0.30, ease: "sine.inOut", yoyo: true, repeat: 1 },                             S3 + 2.65);
+    // Glow burst enters first — creates cinematic anticipation
+    tl.fromTo("#s3-glow-burst",   { scale: 0, opacity: 0 },    { scale: 1, opacity: 1, duration: 0.80, ease: "power2.out" },   S3 + 0.10);
+    tl.fromTo("#s3-eyebrow",      { autoAlpha: 0, y: -22 },   { autoAlpha: 1, y: 0, duration: 0.32, ease: "back.out(2.0)" },  S3 + 0.18);
+    tl.fromTo("#s3-sub",          { autoAlpha: 0 },            { autoAlpha: 1, duration: 0.26, ease: "power2.out" },           S3 + 0.36);
+    // 72% SLAMS in — hero moment
+    tl.fromTo("#s3-model-pct",    { autoAlpha: 0, scale: 1.7, y: -30 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.60, ease: "back.out(2.4)" }, S3 + 0.54);
+    tl.fromTo("#s3-model-label",  { autoAlpha: 0, y: 20 },   { autoAlpha: 1, y: 0, duration: 0.36, ease: "expo.out" },        S3 + 0.94);
+    // Muted public row fades in subordinate
+    tl.fromTo("#s3-vs-row",       { autoAlpha: 0 },            { autoAlpha: 1, duration: 0.44, ease: "power2.out" },           S3 + 1.20);
+    // Delta pill pops
+    tl.fromTo("#s3-delta",        { autoAlpha: 0, scale: 0.68 }, { autoAlpha: 1, scale: 1, duration: 0.42, ease: "back.out(2.8)" }, S3 + 1.66);
+    // Glow pulse on burst — heartbeat
+    tl.to("#s3-glow-burst", { opacity: 0.55, duration: 0.34, ease: "sine.inOut", yoyo: true, repeat: 1 },                     S3 + 2.00);
+    // 72% number heartbeat
+    tl.to("#s3-model-pct", { scale: 1.04, duration: 0.30, ease: "sine.inOut", yoyo: true, repeat: 1 },                        S3 + 2.60);
 
     // Transition S3 → S4: directional blur push left (T=10.0)
     var T34 = 10.0;
@@ -857,13 +869,13 @@
 
     // ── SCENE 4 — WHY (S4≈10.22s) ──────────────────────────────────────────
     var S4 = T34 + 0.22;
+    tl.fromTo("#s4-ghost",        { autoAlpha: 0 },            { autoAlpha: 1, duration: 2.8, ease: "power1.out" },             S4 + 0.10);
     tl.fromTo("#s4-eyebrow",      { autoAlpha: 0, y: -22 },   { autoAlpha: 1, y: 0, duration: 0.32, ease: "back.out(2.0)" },  S4 + 0.10);
     tl.fromTo("#s4-why-label",    { autoAlpha: 0, x: -48 },  { autoAlpha: 1, x: 0, duration: 0.44, ease: "power3.out" },      S4 + 0.28);
     tl.fromTo("#s4-wickets",      { autoAlpha: 0, scale: 0.62 }, { autoAlpha: 1, scale: 1, duration: 0.58, ease: "back.out(2.0)" }, S4 + 0.66);
     tl.fromTo("#s4-wickets-label",{ autoAlpha: 0 },           { autoAlpha: 1, duration: 0.28, ease: "power1.out" },            S4 + 1.02);
     tl.fromTo("#s4-rule",         { scaleX: 0 },              { scaleX: 1, duration: 0.50, ease: "power2.inOut" },             S4 + 1.22);
     tl.fromTo("#s4-proof",        { autoAlpha: 0, y: 38 },   { autoAlpha: 1, y: 0, duration: 0.50, ease: "back.out(1.6)" },   S4 + 1.52);
-    tl.fromTo("#s4-lesson",       { autoAlpha: 0, y: 22 },   { autoAlpha: 1, y: 0, duration: 0.40, ease: "expo.out" },        S4 + 2.22);
 
     // Transition S4 → S5: blur crossfade medium (T=13.5)
     var T45 = 13.5;
@@ -873,49 +885,58 @@
 
     // ── SCENE 5 — PROBABILITY TRACK (S5≈13.75s) ────────────────────────────
     var S5 = T45 + 0.25;
+    tl.fromTo("#s5-ghost",        { autoAlpha: 0 },            { autoAlpha: 1, duration: 2.6, ease: "power1.out" },             S5 + 0.10);
     tl.fromTo("#s5-eyebrow",      { autoAlpha: 0, y: -22 },   { autoAlpha: 1, y: 0, duration: 0.32, ease: "back.out(2.0)" },  S5 + 0.10);
     tl.fromTo("#s5-header",       { autoAlpha: 0, y: 28 },   { autoAlpha: 1, y: 0, duration: 0.44, ease: "expo.out" },        S5 + 0.28);
 
     // Row 6 enters, then bar fills
-    tl.fromTo("#s5-row6",         { autoAlpha: 0, x: -48 },  { autoAlpha: 1, x: 0, duration: 0.36, ease: "power3.out" },      S5 + 0.62);
+    tl.fromTo("#s5-row6",         { autoAlpha: 0, x: -48 },  { autoAlpha: 1, x: 0, duration: 0.36, ease: "power3.out" },      S5 + 0.40);
+    // Bar fill via GSAP (no style.transform conflict); label counter via proxy
+    tl.fromTo("#bar6", { scaleX: 0 }, { scaleX: 0.72, duration: 0.60, ease: "power2.out", transformOrigin: "left center" },   S5 + 0.60);
     var proxy6 = { val: 0 };
     tl.fromTo(proxy6, { val: 0 }, {
-      val: 72, duration: 0.82, ease: "power2.out",
+      val: 72, duration: 0.60, ease: "power2.out",
       onUpdate: function() {
-        var bar = document.getElementById("bar6");
-        if (bar) bar.style.transform = "scaleX(" + (proxy6.val / 100) + ")";
         var pct = document.getElementById("pct6");
         if (pct) pct.textContent = Math.round(proxy6.val) + "%";
       }
-    }, S5 + 0.82);
+    }, S5 + 0.60);
+
+    // Row 7 — first wicket, probability DROPS to 44% (red = danger signal)
+    tl.fromTo("#s5-row7",         { autoAlpha: 0, x: -48 },  { autoAlpha: 1, x: 0, duration: 0.36, ease: "power3.out" },      S5 + 0.90);
+    tl.fromTo("#bar7", { scaleX: 0 }, { scaleX: 0.44, duration: 0.60, ease: "power2.out", transformOrigin: "left center" },   S5 + 1.10);
+    var proxy7 = { val: 0 };
+    tl.fromTo(proxy7, { val: 0 }, {
+      val: 44, duration: 0.60, ease: "power2.out",
+      onUpdate: function() {
+        var pct = document.getElementById("pct7");
+        if (pct) pct.textContent = Math.round(proxy7.val) + "%";
+      }
+    }, S5 + 1.10);
 
     // Row 11
-    tl.fromTo("#s5-row11",        { autoAlpha: 0, x: -48 },  { autoAlpha: 1, x: 0, duration: 0.36, ease: "power3.out" },      S5 + 1.34);
+    tl.fromTo("#s5-row11",        { autoAlpha: 0, x: -48 },  { autoAlpha: 1, x: 0, duration: 0.36, ease: "power3.out" },      S5 + 1.40);
+    tl.fromTo("#bar11", { scaleX: 0 }, { scaleX: 0.90, duration: 0.60, ease: "power2.out", transformOrigin: "left center" },  S5 + 1.60);
     var proxy11 = { val: 0 };
     tl.fromTo(proxy11, { val: 0 }, {
-      val: 90, duration: 0.82, ease: "power2.out",
+      val: 90, duration: 0.60, ease: "power2.out",
       onUpdate: function() {
-        var bar = document.getElementById("bar11");
-        if (bar) bar.style.transform = "scaleX(" + (proxy11.val / 100) + ")";
         var pct = document.getElementById("pct11");
         if (pct) pct.textContent = Math.round(proxy11.val) + "%";
       }
-    }, S5 + 1.54);
+    }, S5 + 1.60);
 
     // Row 12
-    tl.fromTo("#s5-row12",        { autoAlpha: 0, x: -48 },  { autoAlpha: 1, x: 0, duration: 0.36, ease: "power3.out" },      S5 + 2.06);
+    tl.fromTo("#s5-row12",        { autoAlpha: 0, x: -48 },  { autoAlpha: 1, x: 0, duration: 0.36, ease: "power3.out" },      S5 + 1.90);
+    tl.fromTo("#bar12", { scaleX: 0 }, { scaleX: 0.99, duration: 0.60, ease: "power2.out", transformOrigin: "left center" },  S5 + 2.10);
     var proxy12 = { val: 0 };
     tl.fromTo(proxy12, { val: 0 }, {
-      val: 99, duration: 0.82, ease: "power2.out",
+      val: 99, duration: 0.60, ease: "power2.out",
       onUpdate: function() {
-        var bar = document.getElementById("bar12");
-        if (bar) bar.style.transform = "scaleX(" + (proxy12.val / 100) + ")";
         var pct = document.getElementById("pct12");
         if (pct) pct.textContent = Math.round(proxy12.val) + "%";
       }
-    }, S5 + 2.26);
-
-    tl.fromTo("#s5-insight",      { autoAlpha: 0, y: 22 },   { autoAlpha: 1, y: 0, duration: 0.40, ease: "power2.out" },      S5 + 2.76);
+    }, S5 + 2.10);
 
     // Transition S5 → S6: crossfade resolve (T=16.6)
     var T56 = 16.6;
@@ -925,17 +946,20 @@
 
     // ── SCENE 6 — RESULT + CTA (S6≈17.1s) ─────────────────────────────────
     var S6 = T56 + 0.50;
-    tl.fromTo("#s6-eyebrow",      { autoAlpha: 0, y: -22 },   { autoAlpha: 1, y: 0, duration: 0.32, ease: "back.out(2.0)" },  S6 + 0.10);
-    tl.fromTo("#s6-won",          { autoAlpha: 0, scale: 0.72 }, { autoAlpha: 1, scale: 1, duration: 0.58, ease: "back.out(2.0)" }, S6 + 0.30);
-    tl.fromTo("#s6-won-team",     { autoAlpha: 0, y: 28 },   { autoAlpha: 1, y: 0, duration: 0.40, ease: "expo.out" },        S6 + 0.68);
-    tl.fromTo("#s6-called",       { autoAlpha: 0 },           { autoAlpha: 1, duration: 0.30, ease: "power2.out" },            S6 + 0.94);
-    tl.fromTo("#s6-rule",         { scaleX: 0 },              { scaleX: 1, duration: 0.46, ease: "power2.inOut" },             S6 + 1.12);
-    tl.fromTo("#s6-phil-line1",   { autoAlpha: 0, y: 20 },   { autoAlpha: 1, y: 0, duration: 0.38, ease: "power3.out" },      S6 + 1.34);
-    tl.fromTo("#s6-phil-line2",   { autoAlpha: 0, y: 20 },   { autoAlpha: 1, y: 0, duration: 0.42, ease: "sine.out" },        S6 + 1.60);
-    tl.fromTo("#s6-cta",          { autoAlpha: 0, y: 38, scale: 0.93 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.52, ease: "back.out(1.8)" }, S6 + 1.86);
-    tl.fromTo("#s6-watermark",    { autoAlpha: 0 },           { autoAlpha: 1, duration: 0.30, ease: "power1.out" },            S6 + 2.18);
+    // Glow burst enters before the result number
+    tl.fromTo("#s6-ghost",        { autoAlpha: 0 },            { autoAlpha: 1, duration: 2.6, ease: "power1.out" },             S6 + 0.10);
+    tl.fromTo("#s6-glow-burst",   { scale: 0, opacity: 0 },    { scale: 1, opacity: 1, duration: 0.80, ease: "power2.out" },   S6 + 0.10);
+    tl.fromTo("#s6-eyebrow",      { autoAlpha: 0, y: -22 },   { autoAlpha: 1, y: 0, duration: 0.32, ease: "back.out(2.0)" },  S6 + 0.30);
+    tl.fromTo("#s6-won",          { autoAlpha: 0, scale: 0.72 }, { autoAlpha: 1, scale: 1, duration: 0.58, ease: "back.out(2.0)" }, S6 + 0.50);
+    tl.fromTo("#s6-won-team",     { autoAlpha: 0, y: 28 },   { autoAlpha: 1, y: 0, duration: 0.40, ease: "expo.out" },        S6 + 0.88);
+    tl.fromTo("#s6-called",       { autoAlpha: 0 },           { autoAlpha: 1, duration: 0.30, ease: "power2.out" },            S6 + 1.14);
+    tl.fromTo("#s6-rule",         { scaleX: 0 },              { scaleX: 1, duration: 0.46, ease: "power2.inOut" },             S6 + 1.32);
+    tl.fromTo("#s6-phil-line1",   { autoAlpha: 0, y: 20 },   { autoAlpha: 1, y: 0, duration: 0.38, ease: "power3.out" },      S6 + 1.54);
+    tl.fromTo("#s6-phil-line2",   { autoAlpha: 0, y: 20 },   { autoAlpha: 1, y: 0, duration: 0.42, ease: "sine.out" },        S6 + 1.80);
+    tl.fromTo("#s6-cta",          { autoAlpha: 0, y: 38, scale: 0.93 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.52, ease: "back.out(1.8)" }, S6 + 2.06);
+    tl.fromTo("#s6-watermark",    { autoAlpha: 0 },           { autoAlpha: 1, duration: 0.30, ease: "power1.out" },            S6 + 2.38);
     // CTA pulse
-    tl.to("#s6-cta", { scale: 1.022, duration: 0.34, ease: "sine.inOut", yoyo: true, repeat: 1 },                              S6 + 2.40);
+    tl.to("#s6-cta", { scale: 1.022, duration: 0.34, ease: "sine.inOut", yoyo: true, repeat: 1 },                              S6 + 2.60);
 
     // Final fade to dark (only allowed on last scene)
     tl.to("#s6", { opacity: 0, duration: 0.46, ease: "power2.in" }, 19.50);
