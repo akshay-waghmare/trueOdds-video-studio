@@ -541,6 +541,26 @@
       letter-spacing: 0.12em; text-transform: uppercase;
       color: rgba(255,255,255,0.18);
     }
+    /* ══ Caption Layer ══ */
+    #comp { position: relative; }
+    #caption-layer {
+      position: absolute; bottom: 120px; left: 54px; right: 54px;
+      height: 220px; z-index: 20; pointer-events: none;
+    }
+    .cap-group {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      display: flex; flex-wrap: wrap;
+      justify-content: center; align-items: flex-end;
+      gap: 4px 14px; visibility: hidden;
+    }
+    .cap-word {
+      font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+      font-size: 58px; line-height: 1.1; letter-spacing: 0.03em;
+      color: #ffffff; opacity: 0; display: inline-block;
+      text-shadow: 0 2px 18px rgba(0,0,0,0.96), 0 0 8px rgba(0,0,0,0.85);
+    }
+    .cap-word.hl-yellow { color: #f5c518; }
+    .cap-word.hl-teal   { color: #00c9a7; }
   </style>
 </head>
 <body>
@@ -548,10 +568,13 @@
     id="comp"
     data-composition-id="powerplay-signal"
     data-start="0"
-    data-duration="20"
+    data-duration="23"
     data-width="1080"
     data-height="1920"
   >
+
+    <audio id="vo-audio" src="../assets/vo-powerplay-signal.wav"
+      data-start="0" data-duration="22.3" data-track-index="1" data-volume="1"></audio>
 
     <!-- ══════════════════ SCENE 1 — HOOK ══════════════════ -->
     <div id="s1" class="scene">
@@ -733,6 +756,78 @@
           <span id="s6-cta-sub">Don't guess the match. Read the probability.</span>
         </div>
         <div id="s6-watermark">TrueOddsML &nbsp;&middot;&nbsp; Probability First</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ CAPTION LAYER ══════════════════ -->
+    <div id="caption-layer" data-layout-ignore>
+      <div class="cap-group" id="cg0">
+        <span class="cap-word" id="cg0w0">YESTERDAY,</span>
+        <span class="cap-word" id="cg0w1">RAJASTHAN</span>
+        <span class="cap-word" id="cg0w2">ROYALS</span>
+        <span class="cap-word" id="cg0w3">CHASED</span>
+        <span class="cap-word hl-yellow" id="cg0w4">221,</span>
+      </div>
+      <div class="cap-group" id="cg1">
+        <span class="cap-word hl-yellow" id="cg1w0">71</span>
+        <span class="cap-word" id="cg1w1">FOR</span>
+        <span class="cap-word" id="cg1w2">NONE</span>
+        <span class="cap-word" id="cg1w3">AFTER</span>
+        <span class="cap-word hl-yellow" id="cg1w4">6</span>
+        <span class="cap-word" id="cg1w5">OVERS.</span>
+      </div>
+      <div class="cap-group" id="cg2">
+        <span class="cap-word" id="cg2w0">OUR</span>
+        <span class="cap-word hl-teal" id="cg2w1">MODEL</span>
+        <span class="cap-word" id="cg2w2">GAVE</span>
+        <span class="cap-word" id="cg2w3">THEM</span>
+        <span class="cap-word hl-yellow" id="cg2w4">72%.</span>
+        <span class="cap-word" id="cg2w5">WHY?</span>
+      </div>
+      <div class="cap-group" id="cg3">
+        <span class="cap-word hl-yellow" id="cg3w0">10</span>
+        <span class="cap-word" id="cg3w1">WICKETS</span>
+        <span class="cap-word" id="cg3w2">IN</span>
+        <span class="cap-word" id="cg3w3">HAND,</span>
+        <span class="cap-word" id="cg3w4">THE</span>
+        <span class="cap-word" id="cg3w5">EDGE</span>
+        <span class="cap-word" id="cg3w6">OTHERS</span>
+        <span class="cap-word" id="cg3w7">MISSED.</span>
+      </div>
+      <div class="cap-group" id="cg4">
+        <span class="cap-word" id="cg4w0">WATCH</span>
+        <span class="cap-word" id="cg4w1">HOW</span>
+        <span class="cap-word hl-teal" id="cg4w2">PROBABILITY</span>
+        <span class="cap-word" id="cg4w3">MOVED</span>
+        <span class="cap-word" id="cg4w4">EVERY</span>
+        <span class="cap-word" id="cg4w5">OVER.</span>
+      </div>
+      <div class="cap-group" id="cg5">
+        <span class="cap-word" id="cg5w0">WICKET</span>
+        <span class="cap-word" id="cg5w1">FALLS</span>
+        <span class="cap-word" id="cg5w2">DOWN</span>
+        <span class="cap-word" id="cg5w3">TO</span>
+        <span class="cap-word hl-yellow" id="cg5w4">44.</span>
+      </div>
+      <div class="cap-group" id="cg6">
+        <span class="cap-word" id="cg6w0">RAJASTHAN</span>
+        <span class="cap-word hl-yellow" id="cg6w1">WON.</span>
+      </div>
+      <div class="cap-group" id="cg7">
+        <span class="cap-word" id="cg7w0">CALLED</span>
+        <span class="cap-word" id="cg7w1">IT</span>
+        <span class="cap-word hl-yellow" id="cg7w2">12</span>
+        <span class="cap-word" id="cg7w3">OVERS</span>
+        <span class="cap-word" id="cg7w4">EARLY.</span>
+      </div>
+      <div class="cap-group" id="cg8">
+        <span class="cap-word" id="cg8w0">DON'T</span>
+        <span class="cap-word" id="cg8w1">GUESS</span>
+        <span class="cap-word" id="cg8w2">THE</span>
+        <span class="cap-word" id="cg8w3">MATCH.</span>
+        <span class="cap-word" id="cg8w4">READ</span>
+        <span class="cap-word" id="cg8w5">THE</span>
+        <span class="cap-word hl-teal" id="cg8w6">PROBABILITY.</span>
       </div>
     </div>
 
@@ -962,7 +1057,36 @@
     tl.to("#s6-cta", { scale: 1.022, duration: 0.34, ease: "sine.inOut", yoyo: true, repeat: 1 },                              S6 + 2.60);
 
     // Final fade to dark (only allowed on last scene)
-    tl.to("#s6", { opacity: 0, duration: 0.46, ease: "power2.in" }, 19.50);
+    tl.to("#s6", { opacity: 0, duration: 0.46, ease: "power2.in" }, 22.50);
+
+    // ── Caption groups (word-by-word, synced to vo-powerplay-signal.wav) ───────
+    var CAP_GROUPS = [
+      { id:"cg0", start:0.0,   clear:3.0,
+        words:[ {id:"cg0w0",t:0.0}, {id:"cg0w1",t:0.92}, {id:"cg0w2",t:1.34}, {id:"cg0w3",t:1.82}, {id:"cg0w4",t:2.04} ] },
+      { id:"cg1", start:3.54,  clear:5.88,
+        words:[ {id:"cg1w0",t:3.54}, {id:"cg1w1",t:3.78}, {id:"cg1w2",t:4.18}, {id:"cg1w3",t:4.38}, {id:"cg1w4",t:4.7}, {id:"cg1w5",t:5.08} ] },
+      { id:"cg2", start:5.88,  clear:8.82,
+        words:[ {id:"cg2w0",t:5.88}, {id:"cg2w1",t:6.1}, {id:"cg2w2",t:6.34}, {id:"cg2w3",t:6.6}, {id:"cg2w4",t:6.84}, {id:"cg2w5",t:7.96} ] },
+      { id:"cg3", start:8.82,  clear:11.44,
+        words:[ {id:"cg3w0",t:8.82}, {id:"cg3w1",t:8.94}, {id:"cg3w2",t:9.2}, {id:"cg3w3",t:9.46}, {id:"cg3w4",t:10.02}, {id:"cg3w5",t:10.1}, {id:"cg3w6",t:10.32}, {id:"cg3w7",t:10.54} ] },
+      { id:"cg4", start:11.44, clear:14.0,
+        words:[ {id:"cg4w0",t:11.44}, {id:"cg4w1",t:11.56}, {id:"cg4w2",t:11.8}, {id:"cg4w3",t:12.2}, {id:"cg4w4",t:12.78}, {id:"cg4w5",t:13.14} ] },
+      { id:"cg5", start:14.0,  clear:16.46,
+        words:[ {id:"cg5w0",t:14.0}, {id:"cg5w1",t:14.18}, {id:"cg5w2",t:14.52}, {id:"cg5w3",t:15.0}, {id:"cg5w4",t:15.2} ] },
+      { id:"cg6", start:16.46, clear:17.94,
+        words:[ {id:"cg6w0",t:16.46}, {id:"cg6w1",t:17.06} ] },
+      { id:"cg7", start:17.94, clear:19.72,
+        words:[ {id:"cg7w0",t:17.94}, {id:"cg7w1",t:17.98}, {id:"cg7w2",t:18.18}, {id:"cg7w3",t:18.5}, {id:"cg7w4",t:18.9} ] },
+      { id:"cg8", start:19.72, clear:22.5,
+        words:[ {id:"cg8w0",t:19.72}, {id:"cg8w1",t:19.9}, {id:"cg8w2",t:20.02}, {id:"cg8w3",t:20.22}, {id:"cg8w4",t:21.02}, {id:"cg8w5",t:21.16}, {id:"cg8w6",t:21.4} ] }
+    ];
+    CAP_GROUPS.forEach(function(g) {
+      tl.set("#" + g.id, { visibility: "visible" }, g.start);
+      g.words.forEach(function(w) {
+        tl.fromTo("#" + w.id, { scale: 0.76, opacity: 0, y: 10 }, { scale: 1, opacity: 1, y: 0, duration: 0.18, ease: "back.out(2.2)" }, w.t);
+      });
+      tl.set("#" + g.id, { visibility: "hidden" }, g.clear - 0.04);
+    });
 
     window.__timelines["powerplay-signal"] = tl;
   </script>
